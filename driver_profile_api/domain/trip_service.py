@@ -1,0 +1,33 @@
+# -*- coding: utf-8 -*-
+"""
+driver_profile_api.domain.trip_service
+-------
+
+This file provides the trip business logic.
+"""
+
+# repositories
+from ..dataaccess.repositories.trip_repository import trip_rep
+
+
+class TripService:
+    """
+    Trip Service - Trip business logic
+    """
+
+    def create_trip(self, driver, info, uuid=None):
+        """
+        Create new trip
+
+        Args:
+            driver (Driver): Trip driver
+            info (dict): Trip info
+            uuid (str, optional): Trip UUID. Defaults to None.
+
+        Returns:
+            trip (Trip): Trip created
+        """
+        return trip_rep.create_trip(driver=driver, info=info, uuid=uuid)
+
+
+trip_service = TripService()

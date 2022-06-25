@@ -1,0 +1,7 @@
+Single-database configuration for Flask.
+
+# Commands
+# flask db init
+# flask db stamp head
+# flask db migrate -m ""
+# flask db upgrade

@@ -55,6 +55,7 @@ class Trip(db.Model):
     duration = db.Column(db.Float)
     start = db.Column(db.DateTime)
     end = db.Column(db.DateTime)
+    profile = db.Column(db.String(15))
     created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     
     # foreign key

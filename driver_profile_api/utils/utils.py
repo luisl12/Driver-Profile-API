@@ -11,7 +11,7 @@ from flask import request as req
 from functools import wraps
 
 
-def validade_media_type(mtype):
+def validate_media_type(mtype):
     """
     Validate request media type
 

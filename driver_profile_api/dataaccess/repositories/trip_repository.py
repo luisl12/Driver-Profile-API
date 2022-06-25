@@ -44,22 +44,33 @@ class TripRepository:
             .first()
         )
 
-    def create_trip(self, driver, uuid=None):
+    def create_trip(self, driver, info, uuid=None):
         """
         Create new trip
 
         Args:
             driver (Driver): Trip driver
+            info (dict): Trip info
             uuid (str, optional): Trip UUID. Defaults to None.
 
         Returns:
             trip (Trip): Trip created
         """
+        start = info['start']
+        end = info['end']
+        duration = info['duration']
+        distance = info['distance']
         try:
             if uuid:
-                trip = Trip(uuid=uuid, driver=driver)
+                trip = Trip(
+                    uuid=uuid, driver=driver, start=start, 
+                    end=end, duration=duration, distance=distance
+                )
             else:
-                trip = Trip(driver=driver)
+                trip = Trip(
+                    driver=driver, start=start, end=end,
+                    duration=duration, distance=distance
+                )
             db.session.add(trip)
             db.session.commit()
         except SQLAlchemyError as err:

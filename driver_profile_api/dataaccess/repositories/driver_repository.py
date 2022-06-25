@@ -49,7 +49,7 @@ class DriverRepository:
         Create new driver
 
         Args:
-            uuid (str): Driver UUID
+            uuid (str, optional): Driver UUID. Defaults to None.
 
         Returns:
             driver (Driver): Driver created

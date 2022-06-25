@@ -10,16 +10,17 @@ This module provides the drivers blueprint routes.
 from flask import (
     Blueprint,
     request as req,
+    jsonify,
     current_app
 )
-import uuid
+import uuid as p_uuid
 # utils
 from ..utils.utils import (
     InvalidAPIUsage,
-    validade_media_type
+    validate_media_type
 )
-# repositories
-from ..dataaccess.repositories.driver_repository import driver_rep 
+# services
+from ..domain.driver_service import driver_service 
 
 
 # create drivers blueprint
@@ -28,33 +29,58 @@ drivers_bp = Blueprint('drivers_bp', __name__)
 
 # define drivers route
 @drivers_bp.route("/drivers", methods=['POST'])
-@validade_media_type('application/json')
-def trips():
+@validate_media_type('application/json')
+def drivers():
 
     # get parameters
     try:
         data = req.json
         driver = data['driver']
     except Exception:
-        current_app.logger.info("Create driver - Invalid parameters.")
+        current_app.logger.info("Create driver - Invalid request.")
         raise InvalidAPIUsage("Bad request.", status_code=400)
 
     # verify if uuid is in UUID format
     try:
         if driver:
-            driver_uuid = uuid.UUID(driver)
+            driver_uuid = p_uuid.UUID(driver)
     except ValueError:
         current_app.logger.info("Create driver - Wrong uuid's format.")
         raise InvalidAPIUsage("Bad request.", status_code=400)
 
     # create driver
     if driver:
-        created = driver_rep.create_driver(uuid=driver_uuid)
+        created = driver_service.create_driver(uuid=driver_uuid)
     else:
-        created = driver_rep.create_driver()
+        created = driver_service.create_driver()
     if not created:
         current_app.logger.info("Create driver - Unable to create driver.")
         raise InvalidAPIUsage("Unable to create driver.", status_code=500)
         
     # return 200 OK
     return '', 200
+
+
+# define get driver trips route
+@drivers_bp.route("/drivers/<uuid>/trips", methods=['GET'])
+def driver_trips(uuid):
+    
+    # verify if uuid is in UUID format
+    try:
+        driver_uuid = p_uuid.UUID(uuid)
+    except ValueError:
+        current_app.logger.info("Get driver trips - Wrong uuid's format.")
+        raise InvalidAPIUsage("Bad request.", status_code=400)
+
+    # check if driver exists
+    driver = driver_service.get_driver(driver_uuid)
+    if not driver:
+        current_app.logger.info("Get driver trips - Driver not found.")
+        raise InvalidAPIUsage("Driver Not Found.", status_code=404)
+
+    # get trips
+    trips = driver_service.get_driver_trips(uuid=driver_uuid)
+    resp = jsonify(trips)
+
+    # return response
+    return resp
