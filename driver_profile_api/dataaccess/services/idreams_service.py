@@ -54,12 +54,16 @@ class iDreamsService:
             resp = requests.post(url, headers=headers, json=query)
             resp.raise_for_status()
         except requests.exceptions.HTTPError as errh:
+            print('i-DREAMS Server Error:', errh)
             raise InvalidAPIUsage("i-DREAMS Server Error.", status_code=500)
         except requests.exceptions.ConnectionError as errc:
+            print('i-DREAMS Server Error:', errc)
             raise InvalidAPIUsage("i-DREAMS Server Error.", status_code=500)
         except requests.exceptions.Timeout as errt:
+            print('i-DREAMS Server Error:', errt)
             raise InvalidAPIUsage("i-DREAMS Server Error.", status_code=500)
         except requests.exceptions.RequestException as err:
+            print('i-DREAMS Server Error:', err)
             raise InvalidAPIUsage("i-DREAMS Server Error.", status_code=500)
 
         if not resp.ok:

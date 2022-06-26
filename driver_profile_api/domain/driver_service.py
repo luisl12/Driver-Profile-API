@@ -29,7 +29,7 @@ class DriverService:
 
     def get_driver(self, uuid):
         """
-        Create new driver
+        Get driver
 
         Args:
             uuid (str): Driver UUID

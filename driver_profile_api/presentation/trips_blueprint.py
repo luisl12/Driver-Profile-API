@@ -7,18 +7,22 @@ This module provides the trips blueprint routes.
 """
 
 # packages
+import os
+import pandas as pd
 from flask import (
     Blueprint,
     request as req,
     current_app
 )
 import uuid as p_uuid
+import shortuuid
 from datetime import datetime
 # utils
 from ..utils.utils import (
     InvalidAPIUsage,
     validate_media_type
 )
+from ..utils.construct_trip import construct_dataset
 # services
 from ..domain.driver_service import driver_service
 from ..domain.trip_service import trip_service 
@@ -79,7 +83,7 @@ def trips():
     # verify if uuid's are in UUID format
     try:
         if trip:
-            trip_uuid = p_uuid.UUID(trip)
+            trip_uuid = shortuuid.decode(trip)
         driver_uuid = p_uuid.UUID(driver)
     except ValueError:
         current_app.logger.info("Create trip - Wrong uuid's format.")
@@ -93,7 +97,7 @@ def trips():
 
     # create trip
     if trip:
-        created = trip_service.create_trip(driver=driver, info=info, trip=trip_uuid)
+        created = trip_service.create_trip(driver=driver, info=info, uuid=trip_uuid)
     else:
         created = trip_service.create_trip(driver=driver, info=info)
     if not created:
@@ -117,17 +121,30 @@ def trip_profile():
         current_app.logger.info("Trip profile - Invalid request.")
         raise InvalidAPIUsage("Bad request.", status_code=400)
     
-    # # verify if uuid is in UUID format
-    # try:
-    #     trip_uuid = p_uuid.UUID(uuid)
-    # except ValueError:
-    #     current_app.logger.info("Trip profile - Wrong uuid's format.")
-    #     raise InvalidAPIUsage("Bad request.", status_code=400)
+    # # verify if uuid (shortuuid) is in UUID format
+    try:
+        trip_uuid = shortuuid.decode(uuid)
+    except ValueError:
+        current_app.logger.info("Trip profile - Wrong uuid's format.")
+        raise InvalidAPIUsage("Bad request.", status_code=400)
+
+    # check if trip exists
+    trip = trip_service.get_trip(trip_uuid)
+    if not trip:
+        current_app.logger.info("Trip profile - Trip not found.")
+        raise InvalidAPIUsage("Trip Not Found.", status_code=404)
+
+    # get trip distance and duration
+    distance = trip.distance
+    duration = trip.duration
 
     # get I-Dreams trip data
     trips_data = idreams_service.get_trip_data(uuid)
 
-    # TODO: Create trip like the dataset
+    # create trip like the dataset
+    trip_instance = construct_dataset(trips_data['data'], distance, duration)
+    print(trip_instance)
+
     # TODO: Apply machine learning to determine profile
     # TODO: Update trip profile
 

@@ -29,5 +29,17 @@ class TripService:
         """
         return trip_rep.create_trip(driver=driver, info=info, uuid=uuid)
 
+    def get_trip(self, uuid):
+        """
+        Get trip
+
+        Args:
+            uuid (str): Trip UUID
+
+        Returns:
+            trip (Trip): Trip
+        """
+        return trip_rep.get_trip(uuid=uuid)
+
 
 trip_service = TripService()
