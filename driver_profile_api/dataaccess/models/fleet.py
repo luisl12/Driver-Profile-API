@@ -33,6 +33,11 @@ class Fleet(db.Model):
     ----------
     client_id: Integer
         Associated Client id.
+
+    Relationships
+    ----------
+    trips: Trip
+        List of associated trips.
     """
 
     __tablename__ = 'fleet'
@@ -45,11 +50,14 @@ class Fleet(db.Model):
         nullable=False,
         default=uuid.uuid4,
     )
-    name = db.Column(db.String(40), unique=True, nullable=False)
+    name = db.Column(db.String(40), nullable=False)
     created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     # foreign key
     client_id = db.Column(db.Integer, db.ForeignKey('client.id'))
+
+    # relationships
+    trips = db.relationship('Trip', backref='fleet')
 
     def __repr__(self):
         txt = "<Fleet(id={}, uuid={}, name={})>"

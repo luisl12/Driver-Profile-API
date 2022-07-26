@@ -15,7 +15,7 @@ class TripService:
     Trip Service - Trip business logic
     """
 
-    def create_trip(self, driver, info, uuid=None):
+    def create_trip(self, driver, info, uuid=None, fleet=None):
         """
         Create new trip
 
@@ -23,11 +23,12 @@ class TripService:
             driver (Driver): Trip driver
             info (dict): Trip info
             uuid (str, optional): Trip UUID. Defaults to None.
+            fleet (str, optional): Fleet instance. Defaults to None.
 
         Returns:
             trip (Trip): Trip created
         """
-        return trip_rep.create_trip(driver=driver, info=info, uuid=uuid)
+        return trip_rep.create_trip(driver=driver, info=info, uuid=uuid, fleet=fleet)
 
     def get_trip(self, uuid):
         """

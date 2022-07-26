@@ -35,10 +35,12 @@ class Trip(db.Model):
     created: DateTime
         Creation timestamp.
 
-    Foreign key
+    Foreign keys
     ----------
     driver_id: Integer
         Associated Driver id.
+    fleet_id: Integer
+        Associated Fleet id.
     """
 
     __tablename__ = 'trip'
@@ -58,8 +60,9 @@ class Trip(db.Model):
     profile = db.Column(db.String(15))
     created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     
-    # foreign key
+    # foreign keys
     driver_id = db.Column(db.Integer, db.ForeignKey('driver.id'))
+    fleet_id = db.Column(db.Integer, db.ForeignKey('fleet.id'))
     
     def __repr__(self):
         txt = "<Trip(id={}, uuid={})>"

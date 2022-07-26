@@ -28,7 +28,7 @@ from ..utils.ml_model_utils import predict_profile
 # services
 from ..domain.driver_service import driver_service
 from ..domain.trip_service import trip_service 
-from ..dataaccess.repositories.client_repository import client_rep
+from ..domain.client_service import client_service
 # external services
 from ..dataaccess.services.idreams_service import idreams_service
 
@@ -56,6 +56,18 @@ def trips():
         trip = data['uuid']
     except KeyError:
         trip = None
+
+    # check if fleet uuid is in request and if its in correct format
+    try:
+        fleet = data['fleet']
+        assert isinstance(fleet, str)
+        fleet_uuid = p_uuid.UUID(fleet)
+    except KeyError:
+        current_app.logger.info("Create trip - No fleet provided.")
+        fleet_uuid = None
+    except (ValueError, AssertionError):
+        current_app.logger.info("Create trip - Wrong uuid format.")
+        raise InvalidAPIUsage("Bad request.", status_code=400)
 
     # check info format
     if not isinstance(info, dict):
@@ -85,9 +97,11 @@ def trips():
     # verify if uuid's are in UUID format
     try:
         if trip:
+            assert isinstance(trip, str)
             trip_uuid = shortuuid.decode(trip)
+        assert isinstance(driver, str)
         driver_uuid = p_uuid.UUID(driver)
-    except ValueError:
+    except (ValueError, AssertionError):
         current_app.logger.info("Create trip - Wrong uuid's format.")
         raise InvalidAPIUsage("Bad request.", status_code=400)
 
@@ -97,11 +111,17 @@ def trips():
         current_app.logger.info("Create trip - Driver not found.")
         raise InvalidAPIUsage("Driver Not Found.", status_code=404)
 
+    # get fleet
+    fleet = client_service.get_fleet(fleet_uuid)
+    if not fleet:
+        current_app.logger.info("Create trip - Fleet not found.")
+        raise InvalidAPIUsage("Fleet Not Found.", status_code=404)
+
     # create trip
     if trip:
-        created = trip_service.create_trip(driver=driver, info=info, uuid=trip_uuid)
+        created = trip_service.create_trip(driver=driver, info=info, uuid=trip_uuid, fleet=fleet)
     else:
-        created = trip_service.create_trip(driver=driver, info=info)
+        created = trip_service.create_trip(driver=driver, info=info, fleet=fleet)
     if not created:
         current_app.logger.info("Create trip - Unable to create trip.")
         raise InvalidAPIUsage("Unable to create trip.", status_code=500)
@@ -111,7 +131,7 @@ def trips():
 
 
 # define classify trips route
-@trips_bp.route("/trips", methods=['PUT'])
+@trips_bp.route("/trips", methods=['PATCH'])
 @validate_media_type('application/json')
 def trip_profile():
 
@@ -125,8 +145,9 @@ def trip_profile():
     
     # verify if uuid (shortuuid) is in UUID format
     try:
+        assert isinstance(uuid, str)
         trip_uuid = shortuuid.decode(uuid)
-    except ValueError:
+    except (ValueError, AssertionError):
         current_app.logger.info("Trip profile - Wrong uuid's format.")
         raise InvalidAPIUsage("Bad request.", status_code=400)
 

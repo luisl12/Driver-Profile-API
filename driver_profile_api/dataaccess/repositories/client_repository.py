@@ -25,7 +25,8 @@ class ClientRepository:
         Client repository constructor
 
         Args:
-            model (db.model): Company model
+            model (db.model): Client model
+
         """
         self.model = model
 
@@ -37,7 +38,7 @@ class ClientRepository:
             uuid (UUID): Client UUID
 
         Returns:
-            Company: Client instance
+            Client: Client instance
         """
         return (
             db.session.query(self.model)
@@ -76,5 +77,70 @@ class ClientRepository:
             return False
         else:
             return driver
+
+    def update_client_drivers(self, client, drivers):
+        """
+        Update client drivers
+
+        Args:
+            client (Client): Client to be updated
+            drivers (list): List of drivers
+
+        Returns:
+            bool: True if drivers were updated
+        """
+        try:
+            client.drivers += drivers
+            db.session.commit()
+        except SQLAlchemyError:
+            db.session.rollback()
+            return False
+        else:
+            return True
+
+    def update_client_fleets(self, client, fleets):
+        """
+        Update client fleets
+
+        Args:
+            client (Client): Client to be updated
+            fleets (list): Fleets name list
+
+        Returns:
+            bool: True if fleets were updated
+        """
+        fleet_list = []
+        if len(fleets) > 0:
+            for f in fleets:
+                fleet = Fleet(name=f)
+                db.session.add(fleet)
+                fleet_list.append(fleet)
+        try:
+            client.fleets += fleet_list
+            db.session.commit()
+        except SQLAlchemyError:
+            db.session.rollback()
+            return False
+        else:
+            return True
+
+    def get_fleet_trips(self, client_uuid, fleet_uuid):
+        """
+        Get fleet trips
+
+        Args:
+            client_uuid (str): Client UUID
+            fleet_uuid (str): Fleet UUID
+
+        Returns:
+            str: List of Trips
+        """
+        fleet = db.session.query(Fleet) \
+            .join(self.model) \
+            .filter(self.model.uuid==client_uuid) \
+            .filter(Fleet.uuid==fleet_uuid).first()
+        return fleet.trips
+        
+
 
 client_rep = ClientRepository(Client)

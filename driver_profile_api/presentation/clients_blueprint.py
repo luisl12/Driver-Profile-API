@@ -14,6 +14,8 @@ from flask import (
     current_app
 )
 import uuid as p_uuid
+
+from numpy import c_
 # utils
 from ..utils.utils import (
     InvalidAPIUsage,
@@ -43,11 +45,12 @@ def clients():
     # check if uuid is in request and if its in correct format
     try:
         uuid = data['uuid']
+        assert isinstance(uuid, str)
         client_uuid = p_uuid.UUID(uuid)
     except KeyError:
         current_app.logger.info("Create client - No uuid provided.")
         client_uuid = None
-    except ValueError:
+    except (ValueError, AssertionError):
         current_app.logger.info("Create client - Wrong uuid format.")
         raise InvalidAPIUsage("Bad request.", status_code=400)
 
@@ -70,3 +73,110 @@ def clients():
         
     # return 200 OK
     return '', 200
+
+
+# define update client drivers route
+@clients_bp.route("/clients/<uuid>/drivers", methods=['PATCH'])
+@validate_media_type('application/json')
+def update_client_drivers(uuid):
+
+    # get parameters
+    try:
+        data = req.json
+        drivers = data['drivers']
+    except Exception:
+        current_app.logger.info("Update client drivers - Invalid request.")
+        raise InvalidAPIUsage("Bad request.", status_code=400)
+
+    # check if uuid is in correct format
+    try:
+        client_uuid = p_uuid.UUID(uuid)
+    except ValueError:
+        current_app.logger.info("Update client drivers - Wrong uuid format.")
+        raise InvalidAPIUsage("Bad request.", status_code=400)
+
+    # check if uuid's are in correct format
+    try:
+        assert isinstance(drivers, list) 
+        list(map(lambda f: p_uuid.UUID(f), drivers))
+    except (ValueError, AttributeError, AssertionError):
+        current_app.logger.info("Update client drivers - Wrong uuid's format.")
+        raise InvalidAPIUsage("Bad request.", status_code=400)
+
+    # get client
+    client = client_service.get_client(client_uuid)
+    if not client:
+        current_app.logger.info("Update client drivers - Client not found.")
+        raise InvalidAPIUsage("Client not found.", status_code=404)
+
+    # update client drivers
+    updated = client_service.update_client_drivers(client, drivers)
+    if not updated:
+        current_app.logger.info("Update client drivers - Unable to update client drivers.")
+        raise InvalidAPIUsage("Unable to update client drivers.", status_code=500)
+        
+    # return 200 OK
+    return '', 200
+
+
+# define add fleet to client route
+@clients_bp.route("/clients/<uuid>/fleets", methods=['PATCH'])
+@validate_media_type('application/json')
+def update_client_fleets(uuid):
+
+    # get parameters
+    try:
+        data = req.json
+        fleets = data['fleets']
+        assert isinstance(fleets, list)
+    except (Exception, AssertionError):
+        current_app.logger.info("Add client fleet - Invalid request.")
+        raise InvalidAPIUsage("Bad request.", status_code=400)
+
+    # check if uuid is in correct format
+    try:
+        client_uuid = p_uuid.UUID(uuid)
+    except ValueError:
+        current_app.logger.info("Add client fleet - Wrong uuid format.")
+        raise InvalidAPIUsage("Bad request.", status_code=400)
+
+    # get client
+    client = client_service.get_client(client_uuid)
+    if not client:
+        current_app.logger.info("Add client fleet - Client not found.")
+        raise InvalidAPIUsage("Client not found.", status_code=404)
+
+    # update client drivers
+    updated = client_service.update_client_fleets(client, fleets)
+    if not updated:
+        current_app.logger.info("Add client fleet - Unable to update client fleets.")
+        raise InvalidAPIUsage("Unable to update client fleets.", status_code=500)
+        
+    # return 200 OK
+    return '', 200
+
+
+# define get trips of a client fleet route
+@clients_bp.route("/clients/<c_uuid>/fleets/<f_uuid>/trips", methods=['GET'])
+def get_fleet_trips(c_uuid, f_uuid):
+
+    # check if uuid's are in correct format
+    try:
+        client_uuid = p_uuid.UUID(c_uuid)
+        fleet_uuid = p_uuid.UUID(f_uuid)
+    except ValueError:
+        current_app.logger.info("Get fleet trips - Wrong uuid format.")
+        raise InvalidAPIUsage("Bad request.", status_code=400)
+
+    # get client
+    client = client_service.get_client(client_uuid)
+    if not client:
+        current_app.logger.info("Get fleet trips - Client not found.")
+        raise InvalidAPIUsage("Client not found.", status_code=404)
+
+    # get client fleet trips
+    trips = client_service.get_client_fleet_trips(client_uuid, fleet_uuid)
+    resp = jsonify(trips)
+        
+    # return 200 OK
+    return resp

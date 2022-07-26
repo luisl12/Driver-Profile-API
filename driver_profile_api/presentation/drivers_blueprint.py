@@ -35,21 +35,23 @@ def drivers():
     # get parameters
     try:
         data = req.json
-        driver = data['driver']
     except Exception:
         current_app.logger.info("Create driver - Invalid request.")
         raise InvalidAPIUsage("Bad request.", status_code=400)
 
-    # verify if uuid is in UUID format
+    # check if uuid is in request and if its in correct format
     try:
-        if driver:
-            driver_uuid = p_uuid.UUID(driver)
+        uuid = data['uuid']
+        driver_uuid = p_uuid.UUID(uuid)
+    except KeyError:
+        current_app.logger.info("Create driver - No uuid provided.")
+        driver_uuid = None
     except ValueError:
         current_app.logger.info("Create driver - Wrong uuid's format.")
         raise InvalidAPIUsage("Bad request.", status_code=400)
 
     # create driver
-    if driver:
+    if driver_uuid:
         created = driver_service.create_driver(uuid=driver_uuid)
     else:
         created = driver_service.create_driver()

@@ -44,7 +44,7 @@ class TripRepository:
             .first()
         )
 
-    def create_trip(self, driver, info, uuid=None):
+    def create_trip(self, driver, info, uuid=None, fleet=None):
         """
         Create new trip
 
@@ -52,6 +52,7 @@ class TripRepository:
             driver (Driver): Trip driver
             info (dict): Trip info
             uuid (str, optional): Trip UUID. Defaults to None.
+            fleet (Fleet, optional): Fleet instance. Defaults to None.
 
         Returns:
             trip (Trip): Trip created
@@ -64,12 +65,14 @@ class TripRepository:
             if uuid:
                 trip = Trip(
                     uuid=uuid, driver=driver, start=start, 
-                    end=end, duration=duration, distance=distance
+                    end=end, duration=duration, distance=distance,
+                    fleet=fleet
                 )
             else:
                 trip = Trip(
                     driver=driver, start=start, end=end,
-                    duration=duration, distance=distance
+                    duration=duration, distance=distance,
+                    fleet=fleet
                 )
             db.session.add(trip)
             db.session.commit()
@@ -81,6 +84,16 @@ class TripRepository:
             return trip
 
     def update_trip_profile(self, trip, new_profile):
+        """
+        Update trip profile
+
+        Args:
+            trip (Trip): Trip instance
+            new_profile (str): New trip profile
+
+        Returns:
+            bool: True if profile was updated
+        """
         try:
             trip.profile = new_profile
             db.session.commit()
