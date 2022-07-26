@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-driver_profile_api.dataaccess.models.driver
+driver_profile_api.dataaccess.models.fleet
 -------
 
-This module provides the Driver model.
+This module provides the Fleet model.
 """
 
 # packages
@@ -14,16 +14,18 @@ import uuid
 from driver_profile_api import db
 
 
-class Driver(db.Model):
+class Fleet(db.Model):
     """
-    Driver ORM Model
+    Fleet ORM Model
 
     Attributes
     ----------
     id: Integer
-        Database ID of the driver (primary key).
+        Database ID of the fleet (primary key).
     uuid: UUID <CHAR>
-        Web ID of the driver.
+        Web ID of the fleet.
+    name: String
+        Fleet name.
     created: DateTime
         Creation timestamp.
 
@@ -31,14 +33,9 @@ class Driver(db.Model):
     ----------
     client_id: Integer
         Associated Client id.
-
-    Relationships
-    ----------
-    trips: Trip
-        List of associated trips.
     """
 
-    __tablename__ = 'driver'
+    __tablename__ = 'fleet'
 
     # attributes
     id = db.Column(db.Integer, primary_key=True)
@@ -48,14 +45,12 @@ class Driver(db.Model):
         nullable=False,
         default=uuid.uuid4,
     )
+    name = db.Column(db.String(40), unique=True, nullable=False)
     created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     # foreign key
     client_id = db.Column(db.Integer, db.ForeignKey('client.id'))
 
-    # relationships
-    trips = db.relationship('Trip', backref='driver')
-
     def __repr__(self):
-        txt = "<Driver(id={}, uuid={})>"
-        return txt.format(self.id, self.uuid)
+        txt = "<Fleet(id={}, uuid={}, name={})>"
+        return txt.format(self.id, self.uuid, self.name)

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-driver_profile_api.dataaccess.models.company
+driver_profile_api.dataaccess.models.client
 -------
 
-This module provides the Company model.
+This module provides the Client model.
 """
 
 # packages
@@ -14,16 +14,16 @@ import uuid
 from driver_profile_api import db
 
 
-class Company(db.Model):
+class Client(db.Model):
     """
-    Company ORM Model
+    Client ORM Model
 
     Attributes
     ----------
     id: Integer
-        Database ID of the driver (primary key).
+        Database ID of the client (primary key).
     uuid: UUID <CHAR>
-        Web ID of the driver.
+        Web ID of the client.
     name: String
         Company name.
     created: DateTime
@@ -33,9 +33,11 @@ class Company(db.Model):
     ----------
     drivers: Driver
         List of associated drivers.
+    fleets: Fleet
+        List of associated fleets.
     """
 
-    __tablename__ = 'company'
+    __tablename__ = 'client'
 
     # attributes
     id = db.Column(db.Integer, primary_key=True)
@@ -49,8 +51,9 @@ class Company(db.Model):
     created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     # relationships
-    drivers = db.relationship('Driver', backref='company')
+    drivers = db.relationship('Driver', backref='client')
+    fleets = db.relationship('Fleet', backref='client')
 
     def __repr__(self):
-        txt = "<Company(id={}, uuid={}, name={})>"
+        txt = "<Client(id={}, uuid={}, name={})>"
         return txt.format(self.id, self.uuid, self.name)

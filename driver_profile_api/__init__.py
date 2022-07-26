@@ -48,6 +48,9 @@ def create_app(config_class):
     from .presentation.drivers_blueprint import drivers_bp
     app.register_blueprint(drivers_bp)
 
+    from .presentation.clients_blueprint import clients_bp
+    app.register_blueprint(clients_bp)
+
     from .presentation.errors_blueprint import errors_bp
     app.register_blueprint(errors_bp)
 

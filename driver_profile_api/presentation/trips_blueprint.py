@@ -28,7 +28,7 @@ from ..utils.ml_model_utils import predict_profile
 # services
 from ..domain.driver_service import driver_service
 from ..domain.trip_service import trip_service 
-from ..dataaccess.repositories.company_repository import company_rep
+from ..dataaccess.repositories.client_repository import client_rep
 # external services
 from ..dataaccess.services.idreams_service import idreams_service
 
@@ -175,6 +175,7 @@ def trip_profile():
 
     # update trip profile
     # trip_service.update_trip_profile(trip_uuid, )
+    # TODO: convert prediction to string and return profile
 
     # return response
     return '', 200
