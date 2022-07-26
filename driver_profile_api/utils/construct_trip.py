@@ -38,7 +38,7 @@ def construct_dataset(data, distance, duration):
         'iDreams_Speeding',  # Speeding Map is enough
     ]
     events = np.setdiff1d(dtypes, not_events)
-
+    
     for e in events:
         ev = pd.DataFrame(data[e])
         if e == 'LOD_Event_Map':
@@ -85,6 +85,33 @@ def construct_dataset(data, distance, duration):
             df = edit_idreams_overtaking(ev, df)
         elif e == 'iDreams_Speeding_Map':
             df = edit_idreams_speeding(ev, df)
+        elif e == 'GPS':
+            df = edit_gps_event(ev, df)
+    return df
+
+
+def edit_gps_event(ev, df):
+    """
+    Event indicating the trip start coordinates.
+
+    Generated features:
+        lat (int): Latitude
+        lon (int): Longitude
+
+    Args:
+        ev (pandas.DataFrame): GPS DataFrame
+        df (pandas.DataFrame): Dataset DataFrame
+
+    Returns:
+        pandas.DataFrame: Dataset updated
+    """
+    lat = lon = None
+    if ev is not None:
+        lat = ev['lat'].iloc[0]
+        lon = ev['lon'].iloc[0]
+    # update dataframe
+    df['lat'] = lat
+    df['lon'] = lon
     return df
 
 
@@ -902,3 +929,23 @@ def edit_idreams_speeding(ev, df):
     df['n_speeding_2'] = n_speeding_2
     df['n_speeding_3'] = n_speeding_3
     return df
+
+
+def dataset_features():
+    """
+    Get dataset feature names
+
+    Returns:
+        list: Dataset feature names
+    """
+    return ['n_ha','n_ha_l','n_ha_m','n_ha_h',
+    'n_hb','n_hb_l','n_hb_m','n_hb_h','n_hc','n_hc_l','n_hc_m','n_hc_h','n_ignition_on',
+    'n_ignition_off','fcw_time','hmw_time','ldw_time','pcw_time','n_pedestrian_dz',
+    'light_mode','n_tsr_level','n_tsr_level_0','n_tsr_level_1','n_tsr_level_2',
+    'n_tsr_level_3','n_tsr_level_4','n_tsr_level_5','n_tsr_level_6','n_tsr_level_7',
+    'zero_speed_time','n_zero_speed','n_high_beam','n_low_beam','n_wipers','n_signal_right',
+    'n_signal_left','n_brakes','speed','over_speed_limit','n_fcw','n_hmw','n_ldw','n_ldw_left',
+    'n_ldw_right','n_pcw','n_fatigue_0','n_fatigue_1','n_fatigue_2','n_fatigue_3','n_headway__1',
+    'n_headway_0','n_headway_1','n_headway_2','n_headway_3','n_overtaking_0','n_overtaking_1',
+    'n_overtaking_2','n_overtaking_3','n_speeding_0','n_speeding_1','n_speeding_2','n_speeding_3',
+    'distraction_time','n_distractions']

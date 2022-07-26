@@ -80,4 +80,15 @@ class TripRepository:
         else:
             return trip
 
+    def update_trip_profile(self, trip, new_profile):
+        try:
+            trip.profile = new_profile
+            db.session.commit()
+        except SQLAlchemyError:
+            db.session.rollback()
+            return False
+        else:
+            return True
+
+
 trip_rep = TripRepository(Trip)

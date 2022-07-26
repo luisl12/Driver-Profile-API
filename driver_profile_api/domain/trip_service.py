@@ -41,5 +41,20 @@ class TripService:
         """
         return trip_rep.get_trip(uuid=uuid)
 
+    def update_trip_profile(self, uuid, new_profile):
+        """
+        Update trip profile
+
+        Args:
+            uuid (str): Trip UUID
+            new_profile (str): New trip profile
+
+        Returns:
+            updated (bool): True if profile was updated
+        """
+        trip = self.get_trip(uuid)
+        return trip_rep.update_trip_profile(trip, new_profile)
+
+
 
 trip_service = TripService()

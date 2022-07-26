@@ -7,7 +7,6 @@ This module provides the trips blueprint routes.
 """
 
 # packages
-import os
 import pandas as pd
 from flask import (
     Blueprint,
@@ -17,12 +16,15 @@ from flask import (
 import uuid as p_uuid
 import shortuuid
 from datetime import datetime
+import os
 # utils
 from ..utils.utils import (
     InvalidAPIUsage,
     validate_media_type
 )
-from ..utils.construct_trip import construct_dataset
+from ..utils.construct_trip import construct_dataset, dataset_features
+from ..utils.missing_values import fill_missing_values
+from ..utils.ml_model_utils import predict_profile
 # services
 from ..domain.driver_service import driver_service
 from ..domain.trip_service import trip_service 
@@ -121,11 +123,24 @@ def trip_profile():
         current_app.logger.info("Trip profile - Invalid request.")
         raise InvalidAPIUsage("Bad request.", status_code=400)
     
-    # # verify if uuid (shortuuid) is in UUID format
+    # verify if uuid (shortuuid) is in UUID format
     try:
         trip_uuid = shortuuid.decode(uuid)
     except ValueError:
         current_app.logger.info("Trip profile - Wrong uuid's format.")
+        raise InvalidAPIUsage("Bad request.", status_code=400)
+
+    # check if data is in request and if its in correct format
+    try:
+        trip_instance = data['data']
+        f_names = dataset_features()
+        for f in f_names:
+            assert f in trip_instance
+    except KeyError:
+        current_app.logger.info("Trip profile - No data provided.")
+        trip_instance = None
+    except AssertionError:
+        current_app.logger.info("Trip profile - Data is not in correct format.")
         raise InvalidAPIUsage("Bad request.", status_code=400)
 
     # check if trip exists
@@ -138,15 +153,28 @@ def trip_profile():
     distance = trip.distance
     duration = trip.duration
 
-    # get I-Dreams trip data
-    trips_data = idreams_service.get_trip_data(uuid)
+    # if trip data does not exists in request
+    if not trip_instance:
+        # get I-Dreams trip data
+        trips_data = idreams_service.get_trip_data(uuid)
+        # create trip like the dataset
+        trip_instance = construct_dataset(trips_data['data'], distance, duration)
+    else:
+        dist_dur = {'distance': distance, 'duration': duration}
+        trip_instance = {**dist_dur, **trip_instance}
+        trip_instance = pd.DataFrame([trip_instance])
+    
+    # fill missing values
+    trips = fill_missing_values(trips=trip_instance)
 
-    # create trip like the dataset
-    trip_instance = construct_dataset(trips_data['data'], distance, duration)
-    print(trip_instance)
+    src = os.path.dirname(os.path.abspath(__file__))
+    models = os.path.join(src, '../utils/models')
+    path_name = os.path.join(models, 'decision_tree_model')
+    prediction = predict_profile(path_name=path_name, data=trips)
+    print(prediction)
 
-    # TODO: Apply machine learning to determine profile
-    # TODO: Update trip profile
+    # update trip profile
+    # trip_service.update_trip_profile(trip_uuid, )
 
     # return response
     return '', 200
