@@ -6,6 +6,10 @@ driver_profile_api.domain.client_service
 This file provides the client business logic.
 """
 
+# packages
+from flask import current_app
+import numpy as np
+from scipy import stats
 # repositories
 from ..dataaccess.repositories.client_repository import client_rep
 from ..dataaccess.repositories.fleet_repository import fleet_rep
@@ -29,7 +33,16 @@ class ClientService:
         Returns:
             client (Client): Client created
         """
-        return client_rep.create_client(name, uuid, fleets)
+        c = client_rep.create_client(name, uuid, fleets)
+        if not c:
+            return None
+        driver = {
+            'uuid': str(c.uuid),
+            'name': str(c.name),
+            'drivers': [d.uuid for d in c.drivers],
+            'fleets': [f.uuid for f in c.fleets]
+        }
+        return driver
 
     def get_client(self, uuid):
         """
@@ -42,6 +55,22 @@ class ClientService:
             client (Client): Client
         """
         return client_rep.get_client(uuid)
+
+    def get_clients(self):
+        """
+        Get clients
+
+        Returns:
+            client (Client): Client
+        """
+        clients = client_rep.get_clients()
+        clients = [{
+            'uuid': str(c.uuid),
+            'name': str(c.name),
+            'drivers': [d.uuid for d in c.drivers],
+            'fleets': [f.uuid for f in c.fleets]
+        } for c in clients]
+        return clients
 
     def get_fleet(self, uuid):
         """
@@ -85,7 +114,7 @@ class ClientService:
             'duration': t.duration,
             'distance': t.distance,
             'profile': t.profile
-        } for t in trips]
+        } for t in trips.trips]
         return trips
 
     def update_client_fleets(self, client, fleets):
@@ -104,6 +133,45 @@ class ClientService:
         for f in in_common:
             fleets.remove(f)
         return client_rep.update_client_fleets(client, fleets)
+
+    def get_fleet_profile(self, client_uuid, fleet_uuid):
+        """
+        Get fleet profile
+
+        Args:
+            client_uuid (str): Client UUID
+            fleet_uuid (str): Fleet UUID
+
+        Returns:
+            profile (str): Fleet profile
+        """
+        trips = client_rep.get_fleet_trips(client_uuid, fleet_uuid).trips
+        # must have at least 2 trips
+        if len(trips) < 2:
+            return None
+        # get profiles dict
+        prof_dict = current_app.config['PROFILES']
+        # convert profile str to int
+        profiles = [prof_dict[t.profile] for t in trips]
+        # calculate gain loss func for all trips
+        gain_loss = [np.log(y/x) for x, y in zip(profiles, profiles[1:])]
+        # calculate fleet volatility
+        fleet_volatility = np.std(gain_loss)
+        # get most common profile
+        mode_profile = stats.mode(profiles, keepdims=False).mode
+        # create behavior message to warn if volatility is high
+        if fleet_volatility < 0.5:
+            status = 'Consistent fleet behavior over time.'
+        else:
+            status = 'Inconsistent fleet behavior over time.'
+        info = {
+            'fleet_profile': list(prof_dict.keys())[list(prof_dict.values()).index(mode_profile)],
+            'behavior_status': {
+                'status': status,
+                'volatility': fleet_volatility
+            }
+        }
+        return info
 
 
 client_service = ClientService()

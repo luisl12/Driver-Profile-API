@@ -59,3 +59,21 @@ def create_app(config_class):
         db.create_all()
 
     return app
+
+
+# just because of joblib pickle...
+def normalize_by_distance(df):
+    """
+    Normalize dataset by trip distance.
+    Each instance gets divided by trip distance.
+
+    Args:
+        df (pandas.DataFrame): Dataset
+
+    Returns:
+        pandas.DataFrame: Dataset normalized
+    """
+    trips = df.div(df['distance'], axis=0)
+    trips = trips.drop(labels='distance', axis=1)
+    trips = trips.drop(labels='duration', axis=1)
+    return trips

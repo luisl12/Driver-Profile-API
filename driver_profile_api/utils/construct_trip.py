@@ -9,8 +9,6 @@ This module provides utilities to construct trip instance to determine profile.
 # packages
 import pandas as pd
 import numpy as np
-# local
-from .speed_limit_osm import is_over_speed_limit
 
 
 def construct_dataset(data, distance, duration):
@@ -19,6 +17,8 @@ def construct_dataset(data, distance, duration):
 
     Args:
         data (dict): Trip data
+        distance (float): Trip distance in km
+        duration (float): Trip duration in seconds
 
     Returns:
         pandas.DataFrame: Dataset DataFrame
@@ -41,34 +41,20 @@ def construct_dataset(data, distance, duration):
     
     for e in events:
         ev = pd.DataFrame(data[e])
-        if e == 'LOD_Event_Map':
-            # TODO: Confirmar se se a mao ficar no volante se continuam a
-            # receber sinais ou é só no 1º contato
-            df = edit_lod_event(ev, df)
-        elif e == 'Drowsiness_Map':
-            # TODO: Confirmar quais sao os niveis de drowsiness e pedir um
-            # ficheiro de exemplo
-            df = edit_drowsiness_events(ev, df)
-        elif e == 'DrivingEvents_Map':
+        # if e == 'LOD_Event_Map':
+            # df = edit_lod_event(ev, df)
+        # if e == 'Drowsiness_Map':
+            # df = edit_drowsiness_events(ev, df)
+        if e == 'DrivingEvents_Map':
             df = edit_driving_events(ev, df)
-        elif e == 'Distraction_Map':
-            # TODO: Pedir um ficheiro de exmplo para confirmar se está bem
-            # implementado
-            df = edit_distraction(ev, df)
-        elif e == 'Ignition':
-            # TODO: Verificar se está bem calculado
-            # Pedir um ficheiro de exmplo para confirmar se está bem
-            df = edit_ignition_events(ev, df)
+        # elif e == 'Distraction_Map':
+        #     df = edit_distraction(ev, df)
+        # elif e == 'Ignition':
+        #     df = edit_ignition_events(ev, df)
         elif e == 'ME_AWS':
             df = edit_me_aws_events(ev, df)
         elif e == 'ME_Car':
-            # Includes the GPS (to get OpenStreetMapp overspeeding events)
-            osm_speed = False
-            try:
-                gps_data = data['GPS']
-            except KeyError:
-                gps_data = None
-            df = edit_me_car_events(ev, df, osm_speed=osm_speed, gps_data=gps_data)
+            df = edit_me_car_events(ev, df)
         elif e == 'ME_FCW_Map':
             df = edit_me_fcw_map(ev, df)
         elif e == 'ME_HMW_Map':
@@ -85,8 +71,8 @@ def construct_dataset(data, distance, duration):
             df = edit_idreams_overtaking(ev, df)
         elif e == 'iDreams_Speeding_Map':
             df = edit_idreams_speeding(ev, df)
-        elif e == 'GPS':
-            df = edit_gps_event(ev, df)
+        # elif e == 'GPS':
+        #     df = edit_gps_event(ev, df)
     return df
 
 
@@ -194,7 +180,6 @@ def edit_driving_events(ev, df):
     and harsh cornering behaviours.
 
     Generated features:
-        TODO: Acrescentar o tempo o tempo de cada evento ??
         n_ha (int): Number of harsh acceleration events
         n_ha_l (int): Number of harsh acceleration events with low severity
         n_ha_m (int): Number of harsh acceleration events with medium severity
@@ -335,9 +320,6 @@ def edit_me_aws_events(ev, df):
         n_tsr_level_5 (int): Number of times 20-25 units over speed limit
         n_tsr_level_6 (int): Number of times 25-30 units over speed limit
         n_tsr_level_7 (int): Number of times 30+ units over speed limit
-        zero_speed_time (float): Time the vehicle was stopped (seconds)
-        n_zero_speed (int): Number of times the vehicle stopped
-                            (first time ignition ON does not count)
 
     Args:
         ev (pandas.DataFrame): ME_AWS DataFrame
@@ -346,16 +328,11 @@ def edit_me_aws_events(ev, df):
     Returns:
         pandas.DataFrame: Dataset updated
     """
-    fcw_time = hmw_time = ldw_time = pcw_time = zero_speed_time = None
+    fcw_time = hmw_time = ldw_time = pcw_time = None
     n_pedestrian_dz = n_tsr_level = n_tsr_level_0 = n_tsr_level_1 = None
     n_tsr_level_2 = n_tsr_level_3 = n_tsr_level_4 = n_tsr_level_5 = None
-    n_tsr_level_6 = n_tsr_level_7 = n_zero_speed = None
-    light_mode = None
+    n_tsr_level_6 = n_tsr_level_7 = None
     if ev is not None:
-        # Para o fcw:
-        # 1 - Calcular o numero de eventos fcw através do ME_FCW_Map
-        # 2 - Calcular o tempo total (ou percentagem de tempo da trip) de fcw
-        # na trip através do ME_AWS
 
         # fcw total time in trip
         fcw_indexes = ev.ne(ev.shift()).filter(['fcw']) \
@@ -368,12 +345,6 @@ def edit_me_aws_events(ev, df):
         fcw_diff = fcw_date.diff(periods=1)[1:len(fcw_date) + 1:2]
         fcw_time = fcw_diff.sum().total_seconds()
 
-        # Para o hw:
-        # 1 - Calcular o numero de eventos hmw através do ME_HMW_Map
-        # (hw_level = 2)
-        # 2 - Calcular o tempo total (ou percentagem de tempo da trip) de hwmw
-        # na trip através do ME_AWS
-
         # hmw total time in trip
         hmw_indexes = ev.ne(ev.shift()).filter(['hmw']) \
             .apply(lambda x: x.index[x].tolist()) \
@@ -384,15 +355,6 @@ def edit_me_aws_events(ev, df):
         hmw_date = pd.to_datetime(hmw_data, format='%Y-%m-%d')
         hmw_diff = hmw_date.diff(periods=1)[1:len(hmw_date) + 1:2]
         hmw_time = hmw_diff.sum().total_seconds()
-
-        # Para o ldw:
-        # 1 - Calcular o numero de eventos ldw através do ME_LDW_Map
-        # 2 - Calcular o numero de eventos ldw LEFT
-        # através do ME_LDW_Map
-        # 3 - Calcular o numero de eventos ldw RIGHT
-        # através do ME_LDW_Map
-        # 4 - Calcular o tempo total (ou percentagem de tempo da trip) de ldw
-        # na trip através do ME_AWS
 
         # ldw total time in trip
         ldw_indexes = ev.ne(ev.shift()).filter(['ldw']) \
@@ -405,11 +367,6 @@ def edit_me_aws_events(ev, df):
         ldw_diff = ldw_date.diff(periods=1)[1:len(ldw_date) + 1:2]
         ldw_time = ldw_diff.sum().total_seconds()
 
-        # Para o pcw:
-        # 1 - Calcular o numero de eventos pcw através do ME_PCW_Map
-        # 2 - Calcular o tempo total (ou percentagem de tempo da trip) de hwmw
-        # na trip através do ME_AWS
-
         # pcw total time in trip
         pcw_indexes = ev.ne(ev.shift()).filter(['pcw']) \
             .apply(lambda x: x.index[x].tolist()) \
@@ -421,10 +378,6 @@ def edit_me_aws_events(ev, df):
         pcw_diff = pcw_date.diff(periods=1)[1:len(pcw_date) + 1:2]
         pcw_time = pcw_diff.sum().total_seconds()
 
-        # Para o pedestrian_dz:
-        # 1 - Calcular o quantas vezes um pedestrian é detetado
-        # através do ME_AWS
-
         pedestrian_dz_indexes = ev.ne(ev.shift()).filter(['pedestrian_dz']) \
             .apply(lambda x: x.index[x].tolist()) \
             .apply(
@@ -435,32 +388,11 @@ def edit_me_aws_events(ev, df):
             pedestrian_dz_data[1:len(pedestrian_dz_data) + 1:2]
         )
 
-        # Para o time_indicator:
-        # 1 - Calcular a moda da hora do dia que mais acontece na trip pq
-        # existem algumas falhas às vezes passa de dia para dusk e dps para dia
-        # através do ME_AWS
-        vals, counts = np.unique(ev['time_indicator'], return_counts=True)
-        index = np.argmax(counts)
-        light_mode = vals[index]
-        # if light_mode == 'day':
-        #     light_mode = 1
-        # elif light_mode == 'dusk':
-        #     light_mode = 2
-        # elif light_mode == 'night':
-        #     light_mode = 3
-
-        # Para o tsr:
-        # 1 - Calcular o numero de vezes que ultrapassou o speed limit
-        # através do ME_AWS
-        # 2 - Calcular quantas vezes ultrapassou cada nivel
-        # através do ME_AWS (nivel zero -> nao ultrapassou)
-        # TODO: Questão: Os valores do tsr level estão > 0 mesmo com o tsr_on
-
         tsr_indexes = ev.ne(ev.shift()).filter(['tsr_level']) \
             .apply(lambda x: x.index[x].tolist())
         tsr_data = ev.iloc[tsr_indexes.values.ravel()]['tsr_level']
 
-        n_tsr_level_0 = sum(tsr_data == 0)  # 21
+        n_tsr_level_0 = sum(tsr_data == 0)
         n_tsr_level_1 = sum(tsr_data == 1)
         n_tsr_level_2 = sum(tsr_data == 2)
         n_tsr_level_3 = sum(tsr_data == 3)
@@ -469,25 +401,7 @@ def edit_me_aws_events(ev, df):
         n_tsr_level_6 = sum(tsr_data == 6)
         n_tsr_level_7 = sum(tsr_data == 7)
         # o numero de vezes que ultrapassou (o 0 nao conta)
-        n_tsr_level = len(tsr_data[tsr_data != 0])  # 111
-
-        # Para o zero_speed:
-        # 1 - Calcular o numero de vezes que o veiculo parou através do ME_AWS
-        # (so conta eventos de false para true) e não conta a paragem inicial
-        # (inicio de marcha)
-        # 2 - Calcular o tempo de viagem que o veiculo esteve parado
-
-        zero_speed_indexes = ev.ne(ev.shift()).filter(['zero_speed']) \
-            .apply(lambda x: x.index[x].tolist()) \
-            .apply(
-                lambda row: row - 1 if row.name % 2 != 0 else row, axis=1
-            )[1:]
-        zero_speed_data = ev.iloc[zero_speed_indexes.values.ravel(), 0]
-        zero_speed_date = pd.to_datetime(zero_speed_data, format='%Y-%m-%d')
-        zero_speed_diff = zero_speed_date \
-            .diff(periods=1)[1:len(zero_speed_date) + 1:2]
-        zero_speed_time = zero_speed_diff.sum().total_seconds()
-        n_zero_speed = len(zero_speed_diff)
+        n_tsr_level = len(tsr_data[tsr_data != 0])
 
     # update dataframe
     df['fcw_time'] = fcw_time
@@ -495,7 +409,6 @@ def edit_me_aws_events(ev, df):
     df['ldw_time'] = ldw_time
     df['pcw_time'] = pcw_time
     df['n_pedestrian_dz'] = n_pedestrian_dz
-    df['light_mode'] = light_mode
     df['n_tsr_level'] = n_tsr_level
     df['n_tsr_level_0'] = n_tsr_level_0
     df['n_tsr_level_1'] = n_tsr_level_1
@@ -505,80 +418,27 @@ def edit_me_aws_events(ev, df):
     df['n_tsr_level_5'] = n_tsr_level_5
     df['n_tsr_level_6'] = n_tsr_level_6
     df['n_tsr_level_7'] = n_tsr_level_7
-    df['zero_speed_time'] = zero_speed_time
-    df['n_zero_speed'] = n_zero_speed
     return df
 
 
-def edit_me_car_events(ev, df, osm_speed=True, gps_data=None):
+def edit_me_car_events(ev, df):
     """
     Gives information about the about the car parameters needed for the
     Mobileye system.
 
     Generated features:
-        n_high_beam (int): Number of times high beam is ON
-        n_low_beam (int): Number of times low beam is ON
-        n_wipers (int): Number of times wipers are ON
-        n_signal_right (int): Number of times right turn signal is ON
-        n_signal_left (int): Number of times left turn signal is ON
         n_brakes (int): Number of times breaks are ON
         speed (int): Mean Speed (km/h)
-        over_speed_limit (int): Number of times over speed limit
-                                (with openstreetmap)
 
     Args:
         ev (pandas.DataFrame): ME_Car DataFrame
         df (pandas.DataFrame): Dataset DataFrame
-        osm_speed (bool, optional): Allow OSM overspeed events calculation.
-                                    Defaults to True.
-        gps_data (pandas.DataFrame, optional): GPS DataFrame. Defaults to None.
 
     Returns:
         pandas.DataFrame: Dataset updated
     """
-    high_beam = low_beam = wipers = signal_right = signal_left = None
     brakes = speed = None
     if ev is not None:
-        # number of times high beam is ON
-        high_beam_indexes = ev.ne(ev.shift()).filter(['high_beam']) \
-            .apply(lambda x: x.index[x].tolist()) \
-            .apply(
-                lambda row: row - 1 if row.name % 2 == 0 else row, axis=1
-            )[1:]
-        high_beam_data = ev.iloc[high_beam_indexes.values.ravel()]
-        high_beam = len(high_beam_data[1:len(high_beam_data) + 1:2])
-        # number of times low beam is ON
-        low_beam_indexes = ev.ne(ev.shift()).filter(['low_beam']) \
-            .apply(lambda x: x.index[x].tolist()) \
-            .apply(
-                lambda row: row - 1 if row.name % 2 == 0 else row, axis=1
-            )[1:]
-        low_beam_data = ev.iloc[low_beam_indexes.values.ravel()]
-        low_beam = len(low_beam_data[1:len(low_beam_data) + 1:2])
-        # number of times wipers are ON
-        wipers_indexes = ev.ne(ev.shift()).filter(['wipers']) \
-            .apply(lambda x: x.index[x].tolist()) \
-            .apply(
-                lambda row: row - 1 if row.name % 2 == 0 else row, axis=1
-            )[1:]
-        wipers_data = ev.iloc[wipers_indexes.values.ravel()]
-        wipers = len(wipers_data[1:len(wipers_data) + 1:2])
-        # number of times right turn signal is ON
-        signal_right_indexes = ev.ne(ev.shift()).filter(['signal_right']) \
-            .apply(lambda x: x.index[x].tolist()) \
-            .apply(
-                lambda row: row - 1 if row.name % 2 == 0 else row, axis=1
-            )[1:]
-        signal_right_data = ev.iloc[signal_right_indexes.values.ravel()]
-        signal_right = len(signal_right_data[1:len(signal_right_data) + 1:2])
-        # number of times left turn signal is ON
-        signal_left_indexes = ev.ne(ev.shift()).filter(['signal_left']) \
-            .apply(lambda x: x.index[x].tolist()) \
-            .apply(
-                lambda row: row - 1 if row.name % 2 == 0 else row, axis=1
-            )[1:]
-        signal_left_data = ev.iloc[signal_left_indexes.values.ravel()]
-        signal_left = len(signal_left_data[1:len(signal_left_data) + 1:2])
         # number of times breaks are ON
         brakes = sum(ev['brakes'])
         brakes_indexes = ev.ne(ev.shift()).filter(['brakes']) \
@@ -588,86 +448,13 @@ def edit_me_car_events(ev, df, osm_speed=True, gps_data=None):
             )[1:]
         brakes_data = ev.iloc[brakes_indexes.values.ravel()]
         brakes = len(brakes_data[1:len(brakes_data) + 1:2])
+
         # speed mean
         speed = np.mean(ev['speed'])
 
-        # GPS overspeeding events
-        overspeed_df = ev[['ts', 'speed']].copy()  # [100:105]
-        # print('ME_Car', overspeed_df)
-
-        # convert columns to appropriate type
-        overspeed_df['ts'] = pd.to_datetime(overspeed_df['ts'])
-        overspeed_df['speed'] = pd.to_numeric(overspeed_df['speed'])
-
-        # read GPS table
-        n_over_limit = None
-        gps_ev = gps_data
-
-        if gps_ev is not None and osm_speed:
-            gps_ts_speed = gps_ev[['ts']]  # [14:17]
-            gps_ts_speed['speed'] = None
-
-            # convert columns to appropriate type
-            gps_ts_speed['ts'] = pd.to_datetime(gps_ts_speed['ts'])
-            gps_ts_speed['speed'] = pd.to_numeric(gps_ts_speed['speed'])
-
-            # add GPS (ts, speed=None) to the ME_Car (ts, speed) events
-            overspeed_df = overspeed_df.append(gps_ts_speed, ignore_index=True)
-
-            # sort rows by timestamp column and reset indexes
-            # drop=True makes sure old indexes are not added as new column
-            overspeed_df = overspeed_df.sort_values(by='ts') \
-                .reset_index(drop=True)
-            # print('Sorted', overspeed_df)
-
-            # get the rows that need to calculate the speed
-            speed_rows = overspeed_df[overspeed_df['speed'].isnull()]
-
-            # # convert ts to only seconds since trip started
-            # position = overspeed_df.columns.get_loc('ts')
-            # overspeed_df['ts'] = overspeed_df.iloc[1:, position] - \
-            #     overspeed_df.iat[0, position]
-            # overspeed_df['ts'] = overspeed_df['ts'].dt.total_seconds()
-
-            # make timestamp column the index (for the interpolate function)
-            overspeed_df.index = overspeed_df['ts']
-            del overspeed_df['ts']
-
-            # linear interpolation
-            interpolated = overspeed_df.interpolate(method='time') \
-                .reset_index().loc[speed_rows.index, :]
-            # print(interpolated)
-
-            # if first speed is null -> GPS first ts is < ME_Car ts
-            if interpolated.loc[interpolated.index[0], 'speed']:
-                # fill with ME_Car first value
-                interpolated.fillna(
-                    interpolated[~interpolated['speed'].isnull()]
-                    .head(1)['speed'].values[0],
-                    inplace=True
-                )
-
-            # count the number of speeding events
-            # read lat and lon from GPS and speed from ME_Car
-            speed_values = interpolated.loc[speed_rows.index, 'speed']
-            # print('Indexes', speed_rows.index)
-            # print('Speed values', speed_values)
-            speed_limits = list(map(
-                is_over_speed_limit, gps_ev['lat'], gps_ev['lon'], speed_values
-            ))
-            # print('Speed Limits:', speed_limits)
-            n_over_limit = sum(speed_limits)
-            # print('Number over limit:', n_over_limit)
-
     # update dataframe
-    df['n_high_beam'] = high_beam
-    df['n_low_beam'] = low_beam
-    df['n_wipers'] = wipers
-    df['n_signal_right'] = signal_right
-    df['n_signal_left'] = signal_left
     df['n_brakes'] = brakes
     df['speed'] = speed
-    df['over_speed_limit'] = n_over_limit
     return df
 
 
@@ -939,13 +726,11 @@ def dataset_features():
         list: Dataset feature names
     """
     return ['n_ha','n_ha_l','n_ha_m','n_ha_h',
-    'n_hb','n_hb_l','n_hb_m','n_hb_h','n_hc','n_hc_l','n_hc_m','n_hc_h','n_ignition_on',
-    'n_ignition_off','fcw_time','hmw_time','ldw_time','pcw_time','n_pedestrian_dz',
-    'light_mode','n_tsr_level','n_tsr_level_0','n_tsr_level_1','n_tsr_level_2',
+    'n_hb','n_hb_l','n_hb_m','n_hb_h','n_hc','n_hc_l','n_hc_m','n_hc_h',
+    'fcw_time','hmw_time','ldw_time','pcw_time','n_pedestrian_dz',
+    'n_tsr_level','n_tsr_level_0','n_tsr_level_1','n_tsr_level_2',
     'n_tsr_level_3','n_tsr_level_4','n_tsr_level_5','n_tsr_level_6','n_tsr_level_7',
-    'zero_speed_time','n_zero_speed','n_high_beam','n_low_beam','n_wipers','n_signal_right',
-    'n_signal_left','n_brakes','speed','over_speed_limit','n_fcw','n_hmw','n_ldw','n_ldw_left',
+    'n_brakes','speed', 'n_fcw','n_hmw','n_ldw','n_ldw_left',
     'n_ldw_right','n_pcw','n_fatigue_0','n_fatigue_1','n_fatigue_2','n_fatigue_3','n_headway__1',
     'n_headway_0','n_headway_1','n_headway_2','n_headway_3','n_overtaking_0','n_overtaking_1',
-    'n_overtaking_2','n_overtaking_3','n_speeding_0','n_speeding_1','n_speeding_2','n_speeding_3',
-    'distraction_time','n_distractions']
+    'n_overtaking_2','n_overtaking_3','n_speeding_0','n_speeding_1','n_speeding_2','n_speeding_3']

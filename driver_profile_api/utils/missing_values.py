@@ -7,7 +7,6 @@ This module provides utilities to deal with missing values
 
 # packages
 import pandas as pd
-from .trip_light_mode import get_light_mode
 
 
 def fill_hands_on_missing_values(df, column_names):
@@ -233,18 +232,6 @@ def fill_me_aws_missing_values(df, column_names):
                 .fillna(df['n_pedestrian_dz'].median())
         elif per >= 0.5:
             del df['n_pedestrian_dz']
-    if 'light_mode' in column_names:
-        dataset = df[df['light_mode'].isnull()][[
-            'trip_start', 'trip_end', 'light_mode'
-        ]]
-        dataset['trip_start'] = pd.to_datetime(dataset['trip_start'])
-        dataset['trip_end'] = pd.to_datetime(dataset['trip_end'])
-        for i, row in dataset.iterrows():
-            print(row)
-            print(dataset.at[i, 'light_mode'])
-            print(get_light_mode(row))
-            dataset.at[i, 'light_mode'] = get_light_mode(row)
-        df['light_mode'] = df['light_mode'].fillna(dataset['light_mode'])
     if 'n_tsr_level' in column_names:
         # median
         has, per = has_too_many_nulls(df, 'n_tsr_level')
@@ -622,9 +609,13 @@ def delete_missing_values(df):
     # rows with all NaN (dont count start, end, distance and duration)
     df_mid = df.iloc[:, 4:].dropna(how='all')
     df = df.iloc[:, :4].join(df_mid)
-    # remove distance and duration = 0
-    df = df[df.distance != 0]
-    df = df[df.duration != 0]
+    # remove distance and duration <= 0
+    df = df[df.distance > 0]
+    df = df[df.duration > 0]
+    # remove trips where duration is less than 1 minute
+    df = df[df.duration >= 60]
+    # remove trips where distance is less than 1.5 kms
+    df = df[df.distance >= 1]
     return df
 
 

@@ -46,6 +46,17 @@ class ClientRepository:
             .first()
         )
 
+    def get_clients(self):
+        """
+        Get clients
+
+        Returns:
+            List: Clients list
+        """
+        return (
+            db.session.query(self.model).all()
+        )
+
     def create_client(self, name, uuid=None, fleets=[]):
         """
         Create new client
@@ -66,17 +77,17 @@ class ClientRepository:
                     db.session.add(fleet)
                     fleet_list.append(fleet)
             if uuid:
-                driver = Client(uuid=uuid, name=name, fleets=fleet_list)
+                client = Client(uuid=uuid, name=name, fleets=fleet_list)
             else:
-                driver = Client(name=name, fleets=fleet_list)
-            db.session.add(driver)
+                client = Client(name=name, fleets=fleet_list)
+            db.session.add(client)
             db.session.commit()
         except SQLAlchemyError as err:
             current_app.logger.exception(err)
             db.session.rollback()
             return False
         else:
-            return driver
+            return client
 
     def update_client_drivers(self, client, drivers):
         """
@@ -139,7 +150,7 @@ class ClientRepository:
             .join(self.model) \
             .filter(self.model.uuid==client_uuid) \
             .filter(Fleet.uuid==fleet_uuid).first()
-        return fleet.trips
+        return fleet
         
 
 

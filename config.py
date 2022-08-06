@@ -25,6 +25,12 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     MAX_CONTENT_LENGTH = 10 * 1024 * 1024  # 10 MB Request max size
     DATETIME_FORMAT = '%Y_%m_%dT%H_%M_%S'
+    ML_MODEL_NAME = 'svm_model_pca_multi'
+    PROFILES = {
+        'Risky': 1,
+        'Agressive': 2,
+        'Non-Agressive': 3
+    }
     # JWT_ALGORITHM = environ.get('JWT_ALGORITHM')
     # JWT_DECODE_ALGORITHMS = [environ.get('JWT_DECODE_ALGORITHMS')]
     # JWT_PUBLIC_KEY = open('D:/Estagio/workspace/Tests/.ssh/public.pub').read()

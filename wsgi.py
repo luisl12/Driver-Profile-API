@@ -10,7 +10,7 @@ This module runs the API.
 from os import environ, path
 from dotenv import load_dotenv
 # Flask app factory
-from driver_profile_api import create_app
+from driver_profile_api import create_app, normalize_by_distance
 
 
 # read .env file

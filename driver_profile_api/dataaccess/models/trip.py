@@ -32,6 +32,8 @@ class Trip(db.Model):
         Trip start timestamp.
     end: DateTime
         Trip end timestamp.
+    profile: str
+        Trip profile.
     created: DateTime
         Creation timestamp.
 

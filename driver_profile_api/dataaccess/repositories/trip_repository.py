@@ -44,13 +44,14 @@ class TripRepository:
             .first()
         )
 
-    def create_trip(self, driver, info, uuid=None, fleet=None):
+    def create_trip(self, driver, info, profile, uuid=None, fleet=None):
         """
         Create new trip
 
         Args:
             driver (Driver): Trip driver
             info (dict): Trip info
+            profile (str): Trip profile
             uuid (str, optional): Trip UUID. Defaults to None.
             fleet (Fleet, optional): Fleet instance. Defaults to None.
 
@@ -66,13 +67,13 @@ class TripRepository:
                 trip = Trip(
                     uuid=uuid, driver=driver, start=start, 
                     end=end, duration=duration, distance=distance,
-                    fleet=fleet
+                    profile=profile, fleet=fleet
                 )
             else:
                 trip = Trip(
                     driver=driver, start=start, end=end,
                     duration=duration, distance=distance,
-                    fleet=fleet
+                    profile=profile, fleet=fleet
                 )
             db.session.add(trip)
             db.session.commit()

@@ -70,9 +70,26 @@ def clients():
     if not created:
         current_app.logger.info("Create client - Unable to create client.")
         raise InvalidAPIUsage("Unable to create client.", status_code=500)
-        
+    
+    # create response
+    resp = jsonify(created)
+
     # return 200 OK
-    return '', 200
+    return resp
+
+
+# define get clients route
+@clients_bp.route("/clients", methods=['GET'])
+def get_clients():
+
+    # get clients
+    clients = client_service.get_clients()
+
+    # create response
+    resp = jsonify(clients)
+
+    # return response
+    return resp
 
 
 # define update client drivers route
@@ -129,6 +146,7 @@ def update_client_fleets(uuid):
         data = req.json
         fleets = data['fleets']
         assert isinstance(fleets, list)
+        assert all(isinstance(f, str) for f in fleets)
     except (Exception, AssertionError):
         current_app.logger.info("Add client fleet - Invalid request.")
         raise InvalidAPIUsage("Bad request.", status_code=400)
@@ -174,9 +192,52 @@ def get_fleet_trips(c_uuid, f_uuid):
         current_app.logger.info("Get fleet trips - Client not found.")
         raise InvalidAPIUsage("Client not found.", status_code=404)
 
+    # get fleet
+    fleet = client_service.get_fleet(fleet_uuid)
+    if not fleet:
+        current_app.logger.info("Get fleet trips - Fleet not found.")
+        raise InvalidAPIUsage("Fleet not found.", status_code=404)
+
     # get client fleet trips
     trips = client_service.get_client_fleet_trips(client_uuid, fleet_uuid)
     resp = jsonify(trips)
         
     # return 200 OK
+    return resp
+
+
+# define fleet profile route
+@clients_bp.route("/clients/<c_uuid>/fleets/<f_uuid>/profile", methods=['GET'])
+def get_fleet_profile(c_uuid, f_uuid):
+
+    # check if uuid's are in correct format
+    try:
+        client_uuid = p_uuid.UUID(c_uuid)
+        fleet_uuid = p_uuid.UUID(f_uuid)
+    except ValueError:
+        current_app.logger.info("Get fleet profile - Wrong uuid format.")
+        raise InvalidAPIUsage("Bad request.", status_code=400)
+
+    # get client
+    client = client_service.get_client(client_uuid)
+    if not client:
+        current_app.logger.info("Get fleet trips - Client not found.")
+        raise InvalidAPIUsage("Client not found.", status_code=404)
+
+    # get fleet
+    fleet = client_service.get_fleet(fleet_uuid)
+    if not fleet:
+        current_app.logger.info("Get fleet trips - Fleet not found.")
+        raise InvalidAPIUsage("Fleet not found.", status_code=404)
+
+    # calculate fleet profile
+    fleet = client_service.get_fleet_profile(client_uuid, fleet_uuid)
+    if not fleet:
+        current_app.logger.info("Get fleet profile - Fleet must have at least 2 trips.")
+        raise InvalidAPIUsage("Fleet must have at least 2 trips.", status_code=400)
+
+    # create response
+    resp = jsonify(fleet)
+
+    # return response
     return resp

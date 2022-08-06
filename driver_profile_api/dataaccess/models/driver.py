@@ -48,6 +48,7 @@ class Driver(db.Model):
         nullable=False,
         default=uuid.uuid4,
     )
+    name = db.Column(db.String(40), nullable=False)
     created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     # foreign key

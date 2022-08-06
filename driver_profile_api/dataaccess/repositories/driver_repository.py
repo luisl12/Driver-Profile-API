@@ -44,21 +44,32 @@ class DriverRepository:
             .first()
         )
 
-    def create_driver(self, uuid=None):
+    def get_drivers(self):
+        """
+        Get drivers
+
+        Returns:
+            List: Drivers list
+        """
+        return (
+            db.session.query(self.model).all()
+        )
+
+    def create_driver(self, name, uuid=None):
         """
         Create new driver
 
         Args:
             uuid (str, optional): Driver UUID. Defaults to None.
-
+            name (str): Driver name
         Returns:
             driver (Driver): Driver created
         """
         try:
             if uuid:
-                driver = Driver(uuid=uuid)
+                driver = Driver(uuid=uuid, name=name)
             else:
-                driver = Driver()
+                driver = Driver(name=name)
             db.session.add(driver)
             db.session.commit()
         except SQLAlchemyError as err:

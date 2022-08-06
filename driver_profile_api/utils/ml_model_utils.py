@@ -6,22 +6,22 @@ This module provides utilities to deal with ml model
 """
 
 # packages
-import onnxruntime as rt
-import numpy as np
+import joblib
 
-def predict_profile(path_name, data):
+
+def predict_trip_profile(path, x_test):
     """
     Predict trips profile
 
     Args:
         path_name (str): Model path with name
-        data (pandas.DataFrame): Trips to predict
+        x_test (pandas.DataFrame): Trips to predict
 
     Returns:
         numpy.ndarray: Prediction array with classes
     """
-    sess = rt.InferenceSession(path_name + '.onnx')
-    input_name = sess.get_inputs()[0].name
-    label_name = sess.get_outputs()[0].name
-    pred_onx = sess.run([label_name], {input_name: data.to_numpy()})[0]
-    return pred_onx
+    y_pred = None
+    with open(path + '.joblib', 'rb') as f:
+        model = joblib.load(f)
+        y_pred = model.predict(x_test)
+    return y_pred
