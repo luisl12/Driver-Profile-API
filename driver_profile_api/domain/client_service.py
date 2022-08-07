@@ -9,7 +9,7 @@ This file provides the client business logic.
 # packages
 from flask import current_app
 import numpy as np
-from scipy import stats
+import itertools
 # repositories
 from ..dataaccess.repositories.client_repository import client_rep
 from ..dataaccess.repositories.fleet_repository import fleet_rep
@@ -158,14 +158,23 @@ class ClientService:
         # calculate fleet volatility
         fleet_volatility = np.std(gain_loss)
         # get most common profile
-        mode_profile = stats.mode(profiles, keepdims=False).mode
+        # if 2/3 profiles are most common: choose de most sequently common
+        # if there is no most sequently common or there is more than 1: choose most recent
+        pfs, counts = np.unique(profiles, return_counts=True)
+        highest_count = pfs[counts == counts.max()]
+        if len(highest_count) > 1:
+            l = [(i[0], len(list(i[1]))) for i in itertools.groupby(profiles)][::-1]
+            fleet_profile = max(l, key=lambda x:x[1])[0]
+        else:
+            fleet_profile = highest_count[0]
+
         # create behavior message to warn if volatility is high
         if fleet_volatility < 0.5:
             status = 'Consistent fleet behavior over time.'
         else:
             status = 'Inconsistent fleet behavior over time.'
         info = {
-            'fleet_profile': list(prof_dict.keys())[list(prof_dict.values()).index(mode_profile)],
+            'fleet_profile': list(prof_dict.keys())[list(prof_dict.values()).index(fleet_profile)],
             'behavior_status': {
                 'status': status,
                 'volatility': fleet_volatility

@@ -9,7 +9,7 @@ This file provides the driver business logic.
 # packages
 from flask import current_app
 import numpy as np
-from scipy import stats
+import itertools
 # repositories
 from ..dataaccess.repositories.driver_repository import driver_rep
 
@@ -108,21 +108,28 @@ class DriverService:
         # convert profile str to int
         profiles = [prof_dict[t.profile] for t in trips]
         # calculate gain loss func for all trips
-        # TODO: profiles = [2, 2, 3, 3, 3, 3, 2, 2] agressive or non-agressive?
+        profiles = [3, 3, 3, 2, 2, 1]
         gain_loss = [np.log(y/x) for x, y in zip(profiles, profiles[1:])]
-        print(gain_loss)
         # calculate driver volatility
         driver_volatility = np.std(gain_loss)
-        print(driver_volatility)
         # get most common profile
-        mode_profile = stats.mode(profiles, keepdims=False).mode
+        # if 2/3 profiles are most common: choose de most sequently common
+        # if there is no most sequently common or there is more than 1: choose most recent
+        pfs, counts = np.unique(profiles, return_counts=True)
+        highest_count = pfs[counts == counts.max()]
+        if len(highest_count) > 1:
+            l = [(i[0], len(list(i[1]))) for i in itertools.groupby(profiles)][::-1]
+            driver_profile = max(l, key=lambda x:x[1])[0]
+        else:
+            driver_profile = highest_count[0]
+
         # create behavior message to warn if volatility is high
         if driver_volatility < 0.5:
             status = 'Consistent driver behavior over time.'
         else:
             status = 'Inconsistent driver behavior over time.'
         info = {
-            'driver_profile': list(prof_dict.keys())[list(prof_dict.values()).index(mode_profile)],
+            'driver_profile': list(prof_dict.keys())[list(prof_dict.values()).index(driver_profile)],
             'behavior_status': {
                 'status': status,
                 'volatility': driver_volatility

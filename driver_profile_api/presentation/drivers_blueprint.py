@@ -14,6 +14,7 @@ from flask import (
     current_app
 )
 import uuid as p_uuid
+import shortuuid
 # utils
 from ..utils.utils import (
     InvalidAPIUsage,
@@ -35,6 +36,8 @@ def drivers():
     # get parameters
     try:
         data = req.json
+        name = data['name']
+        assert isinstance(name, str)
     except Exception:
         current_app.logger.info("Create driver - Invalid request.")
         raise InvalidAPIUsage("Bad request.", status_code=400)
@@ -42,23 +45,12 @@ def drivers():
     # check if uuid is in request and if its in correct format
     try:
         uuid = data['uuid']
-        driver_uuid = p_uuid.UUID(uuid)
+        driver_uuid = shortuuid.decode(uuid, legacy=True)
     except KeyError:
         current_app.logger.info("Create driver - No uuid provided.")
         driver_uuid = None
     except ValueError:
         current_app.logger.info("Create driver - Wrong uuid's format.")
-        raise InvalidAPIUsage("Bad request.", status_code=400)
-
-    # check name
-    try:
-        name = data['name']
-        assert isinstance(name, str)
-    except KeyError:
-        current_app.logger.info("Create driver - Invalid request.")
-        raise InvalidAPIUsage("Bad request.", status_code=400)
-    except AssertionError:
-        current_app.logger.info("Create driver - Invalid request.")
         raise InvalidAPIUsage("Bad request.", status_code=400)
 
     # create driver

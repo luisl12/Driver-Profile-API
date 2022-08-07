@@ -24,7 +24,7 @@ class Config(object):
     SECRET_KEY = environ.get('SECRET_KEY')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     MAX_CONTENT_LENGTH = 10 * 1024 * 1024  # 10 MB Request max size
-    DATETIME_FORMAT = '%Y_%m_%dT%H_%M_%S'
+    DATETIME_FORMAT = '%Y/%m/%d %H:%M:%S' 
     ML_MODEL_NAME = 'svm_model_pca_multi'
     PROFILES = {
         'Risky': 1,

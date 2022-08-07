@@ -87,9 +87,9 @@ def trips():
     # check data format
     try:
         ts_start = datetime.fromisoformat(info['start'])
-        _ = ts_start.strftime(current_app.config['DATETIME_FORMAT'])
+        info['start'] = ts_start.strftime(current_app.config['DATETIME_FORMAT'])
         ts_end = datetime.fromisoformat(info['end'])
-        _ = ts_end.strftime(current_app.config['DATETIME_FORMAT'])
+        info['end'] = ts_end.strftime(current_app.config['DATETIME_FORMAT'])
         duration = float(info['duration'])
         distance = float(info['distance'])
     except Exception:
@@ -100,7 +100,7 @@ def trips():
     try:
         if trip:
             assert isinstance(trip, str)
-            trip_uuid = shortuuid.decode(trip)
+            trip_uuid = shortuuid.decode(trip, legacy=True)
         assert isinstance(driver, str)
         driver_uuid = p_uuid.UUID(driver)
     except (ValueError, AssertionError):

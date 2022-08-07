@@ -11,7 +11,7 @@ import pandas as pd
 import numpy as np
 
 
-def construct_dataset(data, distance, duration):
+def construct_dataset(data, distance, duration, test_drivers=False):
     """
     Construct dataset with all the events available for each trip
 
@@ -37,6 +37,8 @@ def construct_dataset(data, distance, duration):
         'iDreams_Overtaking',  # Overtaking Map is enough
         'iDreams_Speeding',  # Speeding Map is enough
     ]
+    if test_drivers:
+        not_events.remove('DriverChange')
     events = np.setdiff1d(dtypes, not_events)
     
     for e in events:
@@ -71,6 +73,11 @@ def construct_dataset(data, distance, duration):
             df = edit_idreams_overtaking(ev, df)
         elif e == 'iDreams_Speeding_Map':
             df = edit_idreams_speeding(ev, df)
+        elif e == 'DriverChange':
+            driver = None
+            if ev is not None:
+                driver = ev['uuid'].iloc[0]
+            df['driver'] = driver 
         # elif e == 'GPS':
         #     df = edit_gps_event(ev, df)
     return df
