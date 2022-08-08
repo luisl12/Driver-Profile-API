@@ -45,7 +45,10 @@ def drivers():
     # check if uuid is in request and if its in correct format
     try:
         uuid = data['uuid']
-        driver_uuid = shortuuid.decode(uuid, legacy=True)
+        try:
+            driver_uuid = shortuuid.decode(uuid, legacy=True)
+        except ValueError:
+            driver_uuid = shortuuid.decode(uuid)
     except KeyError:
         current_app.logger.info("Create driver - No uuid provided.")
         driver_uuid = None

@@ -1,19 +1,14 @@
 # -*- coding: utf-8 -*-
 """
-tests.test_api
+tests.test_idreams_drivers
 --------------
 
-This module provides device endpoints tests for the API.
-
-:copyright: (c) 2021 by CardioID Technologies Lda.
-:license: All rights reserved.
+This module provides a test to create drivers and upload trips from the i-DREAMS API.
 """
 
 # packages
 import pandas as pd
 import requests
-from datetime import datetime
-import pytest
 from os import environ, path
 from dotenv import load_dotenv
 # local
@@ -22,19 +17,19 @@ from driver_profile_api.utils.missing_values import fill_missing_values
 
 # read .env file
 basedir = path.abspath(path.dirname(__file__))
-load_dotenv(path.join(basedir, '.env'))
+load_dotenv(path.join(basedir, '../.env'))
 
 
 # API server
 API_MODE = environ.get("API_MODE")
 if API_MODE == 'dev':
-    SRV = 'http://localhost:5000/'
+    SRV = environ.get("DEV_API_SRV")
 elif API_MODE == 'test':
-    SRV = 'http://localhost:5000/'
+    SRV = environ.get("TEST_API_SRV")
 elif API_MODE == 'prod':
-    SRV = 'http://localhost:5000/'
+    SRV = environ.get("TEST_API_SRV")
 else:
-    SRV = 'http://localhost:5000/'
+    SRV = environ.get("DEV_API_SRV")
 
 
 
@@ -52,17 +47,17 @@ def test_create_driver_and_trips():
                        'wzM4mbzZ5xD9pbX57rGyav']
     """
 
-    for i, d in enumerate(unique_drivers):
-        driver_trips = df[df['driver'] == d]
-        # create driver
-        name = 'Test i-DREAMS driver {}'.format(i+1)
-        uuid = d
-        driver = create_driver(name, uuid)
-        # upload driver trips
-        print('Driver:', driver['uuid'], 'N Trips:', driver_trips.shape)
-        for tidx, t in driver_trips.iterrows():
-            print('Driver:', driver['uuid'], 'Trip:', tidx)
-            create_trip(driver['uuid'], t)
+    # for i, d in enumerate(unique_drivers):
+    #     driver_trips = df[df['driver'] == d]
+    #     # create driver
+    #     name = 'Test i-DREAMS driver {}'.format(i+1)
+    #     uuid = d
+    #     driver = create_driver(name, uuid)
+    #     # upload driver trips
+    #     print('Driver:', driver['uuid'], 'N Trips:', driver_trips.shape)
+    #     for tidx, t in driver_trips.iterrows():
+    #         print('Driver:', driver['uuid'], 'Trip:', tidx)
+    #         create_trip(driver['uuid'], t)
 
 def create_driver(name, uuid):
 

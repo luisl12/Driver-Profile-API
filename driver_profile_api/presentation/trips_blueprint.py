@@ -100,7 +100,10 @@ def trips():
     try:
         if trip:
             assert isinstance(trip, str)
-            trip_uuid = shortuuid.decode(trip, legacy=True)
+            try:
+                trip_uuid = shortuuid.decode(trip, legacy=True)
+            except ValueError:
+                trip_uuid = shortuuid.decode(trip)
         assert isinstance(driver, str)
         driver_uuid = p_uuid.UUID(driver)
     except (ValueError, AssertionError):
