@@ -146,8 +146,8 @@ class ClientService:
             profile (str): Fleet profile
         """
         trips = client_rep.get_fleet_trips(client_uuid, fleet_uuid).trips
-        # must have at least 2 trips
-        if len(trips) < 2:
+        # must have at least 3 trips
+        if len(trips) < 3:
             return None
         # get profiles dict
         prof_dict = current_app.config['PROFILES']

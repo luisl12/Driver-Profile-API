@@ -233,8 +233,8 @@ def get_fleet_profile(c_uuid, f_uuid):
     # calculate fleet profile
     fleet = client_service.get_fleet_profile(client_uuid, fleet_uuid)
     if not fleet:
-        current_app.logger.info("Get fleet profile - Fleet must have at least 2 trips.")
-        raise InvalidAPIUsage("Fleet must have at least 2 trips.", status_code=400)
+        current_app.logger.info("Get fleet profile - Fleet must have at least 3 trips.")
+        raise InvalidAPIUsage("Fleet must have at least 3 trips.", status_code=400)
 
     # create response
     resp = jsonify(fleet)

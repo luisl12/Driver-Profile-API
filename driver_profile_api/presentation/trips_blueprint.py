@@ -162,9 +162,9 @@ def trips():
 
     # update trip profile
     if prediction[0] == 0:
-        profile = 'Non-Agressive'
+        profile = 'Non-Aggressive'
     elif prediction[0] == 1:
-        profile = 'Agressive'
+        profile = 'Aggressive'
     elif prediction[0] == 2:
         profile = 'Risky'
 

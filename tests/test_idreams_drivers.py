@@ -8,6 +8,7 @@ This module provides a test to create drivers and upload trips from the i-DREAMS
 
 # packages
 import pandas as pd
+import numpy as np
 import requests
 from os import environ, path
 from dotenv import load_dotenv
@@ -41,23 +42,22 @@ def test_create_driver_and_trips():
 
     unique_drivers = df['driver'].unique()
     print(unique_drivers, len(unique_drivers))
-    """
-    missing drivers = ['tnfkkL2scEX8gMw2d6ZoDq',
+    missing_drivers = ['tnfkkL2scEX8gMw2d6ZoDq',
                        'onRztoYZ5reHb3B7YziGku',
                        'wzM4mbzZ5xD9pbX57rGyav']
-    """
+    unique_drivers = np.setdiff1d(unique_drivers, missing_drivers)
 
-    # for i, d in enumerate(unique_drivers):
-    #     driver_trips = df[df['driver'] == d]
-    #     # create driver
-    #     name = 'Test i-DREAMS driver {}'.format(i+1)
-    #     uuid = d
-    #     driver = create_driver(name, uuid)
-    #     # upload driver trips
-    #     print('Driver:', driver['uuid'], 'N Trips:', driver_trips.shape)
-    #     for tidx, t in driver_trips.iterrows():
-    #         print('Driver:', driver['uuid'], 'Trip:', tidx)
-    #         create_trip(driver['uuid'], t)
+    for i, d in enumerate(unique_drivers):
+        driver_trips = df[df['driver'] == d]
+        # create driver
+        name = 'Test i-DREAMS driver {}'.format(i+1)
+        uuid = d
+        driver = create_driver(name, uuid)
+        # upload driver trips
+        print('Driver:', driver['uuid'], 'N Trips:', driver_trips.shape)
+        for tidx, t in driver_trips.iterrows():
+            print('Driver:', driver['uuid'], 'Trip:', tidx)
+            create_trip(driver['uuid'], t)
 
 def create_driver(name, uuid):
 

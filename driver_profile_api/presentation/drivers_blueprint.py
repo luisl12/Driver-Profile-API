@@ -131,8 +131,8 @@ def get_driver_profile(uuid):
     # calculate driver profile
     driver = driver_service.get_driver_profile(driver_uuid)
     if not driver:
-        current_app.logger.info("Get driver profile - Driver must have at least 2 trips.")
-        raise InvalidAPIUsage("Driver must have at least 2 trips.", status_code=400)
+        current_app.logger.info("Get driver profile - Driver must have at least 3 trips.")
+        raise InvalidAPIUsage("Driver must have at least 3 trips.", status_code=400)
 
     # create response
     resp = jsonify(driver)

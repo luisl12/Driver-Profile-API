@@ -28,8 +28,8 @@ class Config(object):
     ML_MODEL_NAME = 'svm_model_pca_multi'
     PROFILES = {
         'Risky': 1,
-        'Agressive': 2,
-        'Non-Agressive': 3
+        'Aggressive': 2,
+        'Non-Aggressive': 3
     }
     # JWT_ALGORITHM = environ.get('JWT_ALGORITHM')
     # JWT_DECODE_ALGORITHMS = [environ.get('JWT_DECODE_ALGORITHMS')]

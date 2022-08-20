@@ -100,15 +100,15 @@ class DriverService:
         """
         # get driver trips
         trips = self.get_driver(uuid).trips
-        # must have at least 2 trips
-        if len(trips) < 2:
+        print(len(trips))
+        # must have at least 3 trips
+        if len(trips) < 3:
             return None
         # get profiles dict
         prof_dict = current_app.config['PROFILES']
         # convert profile str to int
         profiles = [prof_dict[t.profile] for t in trips]
         # calculate gain loss func for all trips
-        profiles = [3, 3, 3, 2, 2, 1]
         gain_loss = [np.log(y/x) for x, y in zip(profiles, profiles[1:])]
         # calculate driver volatility
         driver_volatility = np.std(gain_loss)
