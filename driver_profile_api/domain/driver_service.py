@@ -100,7 +100,6 @@ class DriverService:
         """
         # get driver trips
         trips = self.get_driver(uuid).trips
-        print(len(trips))
         # must have at least 3 trips
         if len(trips) < 3:
             return None
@@ -108,6 +107,10 @@ class DriverService:
         prof_dict = current_app.config['PROFILES']
         # convert profile str to int
         profiles = [prof_dict[t.profile] for t in trips]
+        # print(profiles)
+        # print('Risky:', profiles.count(1))
+        # print('Agressive:', profiles.count(2))
+        # print('Non-Agressive:', profiles.count(3))
         # calculate gain loss func for all trips
         gain_loss = [np.log(y/x) for x, y in zip(profiles, profiles[1:])]
         # calculate driver volatility
@@ -124,10 +127,12 @@ class DriverService:
             driver_profile = highest_count[0]
 
         # create behavior message to warn if volatility is high
-        if driver_volatility < 0.5:
+        if driver_volatility <= 0.2:
             status = 'Consistent driver behavior over time.'
-        else:
+        elif driver_volatility > 0.2 and driver_volatility <= 0.4:
             status = 'Inconsistent driver behavior over time.'
+        else:
+            status = 'Very inconsistent driver behavior over time.'
         info = {
             'driver_profile': list(prof_dict.keys())[list(prof_dict.values()).index(driver_profile)],
             'behavior_status': {

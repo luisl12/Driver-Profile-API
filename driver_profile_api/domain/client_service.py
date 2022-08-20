@@ -169,10 +169,12 @@ class ClientService:
             fleet_profile = highest_count[0]
 
         # create behavior message to warn if volatility is high
-        if fleet_volatility < 0.5:
+        if fleet_volatility <= 0.2:
             status = 'Consistent fleet behavior over time.'
-        else:
+        elif fleet_volatility > 0.2 and fleet_volatility <= 0.4:
             status = 'Inconsistent fleet behavior over time.'
+        else:
+            status = 'Very inconsistent fleet behavior over time.'
         info = {
             'fleet_profile': list(prof_dict.keys())[list(prof_dict.values()).index(fleet_profile)],
             'behavior_status': {
