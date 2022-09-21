@@ -30,8 +30,6 @@ from ..utils.ml_model_utils import predict_trip_profile
 from ..domain.driver_service import driver_service
 from ..domain.trip_service import trip_service 
 from ..domain.client_service import client_service
-# external services
-from ..dataaccess.services.idreams_service import idreams_service
 
 
 # create trips blueprint
@@ -127,7 +125,7 @@ def trips():
     # if trip data does not exists in request
     if trip:
         # get I-Dreams trip data
-        trips_data = idreams_service.get_trip_data(trip)
+        trips_data = trip_service.get_idreams_trip_data(trip)
         # create trip like the dataset
         trip_instance = construct_dataset(trips_data['data'], distance, duration)
     else:

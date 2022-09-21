@@ -8,6 +8,8 @@ This file provides the trip business logic.
 
 # repositories
 from ..dataaccess.repositories.trip_repository import trip_rep
+# external services
+from ..dataaccess.services.idreams_service import idreams_service
 
 
 class TripService:
@@ -68,6 +70,18 @@ class TripService:
         """
         trip = self.get_trip(uuid)
         return trip_rep.update_trip_profile(trip, new_profile)
+
+    def get_idreams_trip_data(self, trip):
+        """
+        Get i-DREAMS trip data
+
+        Args:
+            trip (str): Trip UUID
+
+        Returns:
+            data (dict): Retrieved trip data
+        """
+        return idreams_service.get_trip_data(trip)
 
 
 
