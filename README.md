@@ -80,7 +80,20 @@ Endpoints
     >> **start**:\
     >> **start**:\
     }\
-    **data**:
+    **data**:\
+    ```python
+    {
+        "driver": "14ec7cb3a5db4f5cbf643824e3ab636c",
+        "fleet": "d89581bba49c41d4ab50c8d6eba14e45",
+        "info": {
+            "start": "{{start}}",
+            "end": "{{end}}",
+            "duration": {{duration}},
+            "distance": 10
+        },
+        "data": {{data}}
+    }
+    ```
 
     **Response**
     > **uuid**: Driver UUID\
