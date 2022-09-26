@@ -26,7 +26,7 @@ Endpoints
 -------------------
 
 <details>
-### <summary>Create driver</summary>
+<summary><h4>Create driver</h4></summary>
 
 **Endpoint**\
 [POST]
