@@ -35,7 +35,11 @@ Endpoints
     Content-Type: application/json
 
     **Body**
-    > **name**: Driver name
+    ```python
+    {
+        "name": <str>,  # Driver name
+    }
+    ```
 
     **Response**
     > **uuid**: Driver UUID\
@@ -52,8 +56,12 @@ Endpoints
     Content-Type: application/json
 
     **Body**
-    > **client**: Client name\
-    > **fleets**: List with fleet names
+    ```python
+    {
+        "client": <str>,  # Client name
+        "fleets": <list>,  # List with fleet names
+    }
+    ```
 
     **Response**
     > **uuid**: Driver UUID\
@@ -82,6 +90,7 @@ Endpoints
             "duration": <float>,
             "distance": <float>
         },
+        "idreams_uuid": <str, optional>,
         "data": {
             "n_ha": <int>,
             "n_ha_l": <int>,
