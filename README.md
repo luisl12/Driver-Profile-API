@@ -43,6 +43,7 @@ Endpoints
 
 
 * ### Create client
+******
 
     **Endpoint**\
     [POST]
