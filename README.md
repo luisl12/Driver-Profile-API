@@ -27,17 +27,14 @@ Endpoints
 
 ### Create driver
 
-**Endpoint**
-
+**Endpoint**\
 [POST]
 /drivers
 
-**Headers**
-
+**Headers**\
 Content-Type: application/json
 
-**Body**
-
+**Body**\
 {
     "name": <string> >Driver name
 }
