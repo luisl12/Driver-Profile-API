@@ -14,8 +14,6 @@ from flask import (
     current_app
 )
 import uuid as p_uuid
-
-from numpy import c_
 # utils
 from ..utils.utils import (
     InvalidAPIUsage,

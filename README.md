@@ -42,5 +42,52 @@ Endpoints
     > **name**: Driver name
 
 
+* ### Create client
+
+    **Endpoint**\
+    [POST]
+    /clients
+
+    **Headers**\
+    Content-Type: application/json
+
+    **Body**
+    > **client**: Client name\
+    > **fleets**: List with fleet names
+
+    **Response**
+    > **uuid**: Driver UUID\
+    > **name**: Driver name\
+    > **drivers**: List with drivers uuid\
+    > **fleets**: List with fleets uuid
+
+
+* ### Create trip
+
+    **Endpoint**\
+    [POST]
+    /trips
+
+    **Headers**\
+    Content-Type: application/json
+
+    **Body**
+    > **driver**: Client name\
+    > **fleet**: List with fleet names
+    > **info**: {\
+        > **start**:
+        > **start**:
+        > **start**:
+        > **start**:
+    }\
+    > **data**:
+
+    **Response**
+    > **uuid**: Driver UUID\
+    > **name**: Driver name\
+    > **drivers**: List with drivers uuid\
+    > **fleets**: List with fleets uuid
+
+
 
 
