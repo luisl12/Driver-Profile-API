@@ -300,7 +300,9 @@ Content-Type: application/json
 
 **Endpoint**\
 [GET]
-/clients/[uuid]/fleets/<uuid>/profile
+```
+/clients/<uuid>/fleets/<uuid>/profile
+```
 
 **Response**
 ```python
