@@ -183,7 +183,8 @@ Endpoints
         'name': <str>,  # Client name
         'drivers': <list>,  # List of client drivers UUID
         'fleets': <list>  # List of client fleets UUID
-       }...
+       }
+       ...
     ]
     ```
 
