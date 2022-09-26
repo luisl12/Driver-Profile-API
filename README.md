@@ -18,10 +18,25 @@ Running the API
     * Use "pipenv install".
 4. Run the API.
     * Make sure you have the database configured.
-    * Make sure you have the environment variables configured as in the ".env.template" file.
+    * Make sure you have the environment variables configured as in the ".env.template" file, in a ".env" file.
     * Use "python wsgi.py".
 
 
 Endpoints
 -------------------
+
+### Create driver
+
+**Endpoint**
+[POST]
+/drivers
+
+**Headers**
+Content-Type: application/json
+**Body**
+{
+    "name": <string> >Driver name
+}
+
+
 
