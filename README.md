@@ -349,9 +349,6 @@ Content-Type: application/json
 }
 ```
 
-**Response**
+**Response**\
 200 OK
-```python
-{}
-```
 </details>
