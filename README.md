@@ -35,9 +35,8 @@ Endpoints
 Content-Type: application/json
 
 **Body**\
-{\
-> "name": Driver name
-}
+"name" > Driver name
+
 
 
 
