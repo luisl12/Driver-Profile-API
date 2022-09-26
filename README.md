@@ -25,7 +25,7 @@ Running the API
 Endpoints
 -------------------
 
-<details><summary>### Create driver</summary>
+### <details><summary>Create driver</summary>
 
 **Endpoint**\
 [POST]
