@@ -17,9 +17,9 @@ Running the API
 3. Install requirements.
     * Use "pipenv install".
 4. Run the API.
-    * Make sure you have the database configured.
+    * Make sure you have the database configured (you only need to create the database, the models are created automatically).
     * Make sure you have the environment variables configured as in the ".env.template" file, in a ".env" file.
-    * Use "python wsgi.py".
+    * Use "python wsgi.py" to run the API.
 
 
 Endpoints
@@ -184,6 +184,25 @@ Endpoints
         'name': <str>,  # Client name
         'drivers': <list>,  # List of client drivers UUID
         'fleets': <list>  # List of client fleets UUID
+       }
+       ...
+    ]
+    ```
+
+* ### Get drivers
+
+    **Endpoint**\
+    [GET]
+    /drivers
+
+    **Response**
+    ```python
+    # List of all drivers
+    [
+       {
+        'client': <str>,  # Client UUID
+        'name': <str>,  # Driver name
+        'uuid': <str>,  # Driver UUID
        }
        ...
     ]
