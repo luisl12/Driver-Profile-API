@@ -297,16 +297,13 @@ Content-Type: application/json
 
 **Response**
 ```python
-[
-    {
+{
     "behavior_status": {
         "status": <str>,  # Status message
         "volatility": <float>  # Volatility value
     },
     "driver_profile": <str>  # Driver profile
-    }
-    ...
-]
+}
 ```
 </details>
 
@@ -322,16 +319,39 @@ Content-Type: application/json
 
 **Response**
 ```python
-[
-    {
+{
     "behavior_status": {
         "status": <str>,  # Status message
         "volatility": <float>  # Volatility value
     },
     "fleet_profile": <str>  # Fleet profile
-    }
-    ...
-]
+}
 ```
 </details>
 
+
+<details>
+<summary><h3>Add client drivers</h3></summary>
+
+**Endpoint**\
+[PATCH]
+```
+/clients/<uuid>/drivers
+```
+
+**Headers**\
+Content-Type: application/json
+
+**Body**
+```python
+{
+    "drivers": <list>  # List of drivers UUID
+}
+```
+
+**Response**
+200 OK
+```python
+{}
+```
+</details>
