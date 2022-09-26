@@ -27,15 +27,15 @@ Endpoints
 
 * ### Create driver
 
-**Endpoint**\
-[POST]
-/drivers
+    **Endpoint**\
+    [POST]
+    /drivers
 
-**Headers**\
-Content-Type: application/json
+    **Headers**\
+    Content-Type: application/json
 
-**Body**\
-> "name": Driver name
+    **Body**
+    > **name**: Driver name
 
 
 
