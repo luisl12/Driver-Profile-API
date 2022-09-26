@@ -25,7 +25,7 @@ Running the API
 Endpoints
 -------------------
 
-* ### Create driver
+* ### Create driver <br/>
 
     **Endpoint**\
     [POST]
@@ -42,8 +42,7 @@ Endpoints
     > **name**: Driver name
 
 
-* ### Create client
-******
+* ### Create client <br/>
 
     **Endpoint**\
     [POST]
