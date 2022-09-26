@@ -352,3 +352,27 @@ Content-Type: application/json
 **Response**\
 200 OK
 </details>
+
+
+<details>
+<summary><h3>Add client fleets</h3></summary>
+
+**Endpoint**\
+[PATCH]
+```
+/clients/<uuid>/fleets
+```
+
+**Headers**\
+Content-Type: application/json
+
+**Body**
+```python
+{
+    "fleets": <list>  # List of fleets name
+}
+```
+
+**Response**\
+200 OK
+</details>
