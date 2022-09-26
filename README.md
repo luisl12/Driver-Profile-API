@@ -74,12 +74,11 @@ Endpoints
     **Body**
     > **driver**: Client name\
     > **fleet**: List with fleet names\
-    > **info**: 
-    {
-    >> **start**:\
-    >> **start**:\
-    >> **start**:\
-    >> **start**:\
+    > **info**: {
+    * > **start**:\
+    * > **start**:\
+    * > **start**:\
+    * > **start**:\
     }
     > **data**:
 
