@@ -38,7 +38,7 @@ Endpoints
     > **name**: Driver name
 
     **Response**
-    > **uuid**: Driver UUID
+    > **uuid**: Driver UUID\
     > **name**: Driver name
 
 
