@@ -271,3 +271,49 @@ Content-Type: application/json
 ```
 </details>
 
+
+<details>
+<summary><h3>Get driver profile</h3></summary>
+
+**Endpoint**\
+[GET]
+/drivers/<uuid>/profile
+
+**Response**
+```python
+[
+    {
+    "behavior_status": {
+        "status": <str>,  # Status message
+        "volatility": <float>  # Volatility value
+    }
+    "driver_profile": <str>  # Driver profile
+    }
+    ...
+]
+```
+</details>
+
+
+<details>
+<summary><h3>Get fleet profile</h3></summary>
+
+**Endpoint**\
+[GET]
+/clients/<uuid>/fleets/<uuid>/profile
+
+**Response**
+```python
+[
+    {
+    "behavior_status": {
+        "status": <str>,  # Status message
+        "volatility": <float>  # Volatility value
+    }
+    "fleet_profile": <str>  # Fleet profile
+    }
+    ...
+]
+```
+</details>
+
