@@ -25,29 +25,30 @@ Running the API
 Endpoints
 -------------------
 
-* ### Create driver
+<details><summary>Create driver</summary>
 
-    **Endpoint**\
-    [POST]
-    /drivers
+**Endpoint**\
+[POST]
+/drivers
 
-    **Headers**\
-    Content-Type: application/json
+**Headers**\
+Content-Type: application/json
 
-    **Body**
-    ```python
-    {
-        "name": <str>,  # Driver name
-    }
-    ```
+**Body**
+```python
+{
+    "name": <str>,  # Driver name
+}
+```
 
-    **Response**
-    ```python
-    {
-        "uuid": <str>,  # Driver UUID
-        "name": <str>,  # Driver name
-    }
-    ```
+**Response**
+```python
+{
+    "uuid": <str>,  # Driver UUID
+    "name": <str>,  # Driver name
+}
+```
+</details>
 
 
 * ### Create client
