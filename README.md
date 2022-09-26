@@ -52,209 +52,222 @@ Content-Type: application/json
 </details>
 
 
-* ### Create client
+<details>
+<summary><h3>Create client</h3></summary>
 
-    **Endpoint**\
-    [POST]
-    /clients
+**Endpoint**\
+[POST]
+/clients
 
-    **Headers**\
-    Content-Type: application/json
+**Headers**\
+Content-Type: application/json
 
-    **Body**
-    ```python
-    {
-        "client": <str>,  # Client name
-        "fleets": <list>,  # List with fleet names
-    }
-    ```
+**Body**
+```python
+{
+    "client": <str>,  # Client name
+    "fleets": <list>,  # List with fleet names
+}
+```
 
-    **Response**
-    ```python
-    {
-        "uuid": <str>,  # Driver UUID
-        "name": <str>,  # Driver name
-        "drivers": <list>,  # List with drivers uuid
-        "fleets": <list>,  # List with fleets uuid
-    }
-    ```
+**Response**
+```python
+{
+    "uuid": <str>,  # Driver UUID
+    "name": <str>,  # Driver name
+    "drivers": <list>,  # List with drivers uuid
+    "fleets": <list>,  # List with fleets uuid
+}
+```
+</details>
 
 
-* ### Create trip
+<details>
+<summary><h3>Create trip</h3></summary>
 
-    **Endpoint**\
-    [POST]
-    /trips
+**Endpoint**\
+[POST]
+/trips
 
-    **Headers**\
-    Content-Type: application/json
+**Headers**\
+Content-Type: application/json
 
-    **Body**
-    ```python
-    {
-        "driver": <str>,  # Driver UUID
-        "fleet": <str>,  # Fleet UUID
-        "info": {  # Trip info
-            "start": <str>,  # Trip start datetime in ISO format
-            "end": <str>,  # Trip end datetime in ISO format
-            "duration": <float>,  # Trip duration in seconds
-            "distance": <float>  # Trip distance in km
-        },
-        "idreams_uuid": <str>,  # i-DREAMS trip UUID, required if "data" is None
-        "data": {  # Trip data, required if "idreams_uuid" is None
-            "n_ha": <int>,
-            "n_ha_l": <int>,
-            "n_ha_m": <int>,
-            "n_ha_h": <int>,
-            "n_hb": <int>,
-            "n_hb_l": <int>,
-            "n_hb_m": <int>,
-            "n_hb_h": <int>,
-            "n_hc": <int>,
-            "n_hc_l": <int>,
-            "n_hc_m": <int>,
-            "n_hc_h": <int>,
-            "fcw_time": <int>,
-            "hmw_time": <int>,
-            "ldw_time": <int>,
-            "pcw_time": <int>,
-            "n_pedestrian_dz": <int>,
-            "n_tsr_level": <int>,
-            "n_tsr_level_0": <int>,
-            "n_tsr_level_1": <int>,
-            "n_tsr_level_2": <int>,
-            "n_tsr_level_3": <int>,
-            "n_tsr_level_4": <int>,
-            "n_tsr_level_5": <int>,
-            "n_tsr_level_6": <int>,
-            "n_tsr_level_7": <int>,
-            "n_brakes": <int>,
-            "speed": <int>,
-            "n_fcw": <int>,
-            "n_hmw": <int>,
-            "n_ldw": <int>,
-            "n_ldw_left": <int>,
-            "n_ldw_right": <int>,
-            "n_pcw": <int>,
-            "n_fatigue_0": <int>,
-            "n_fatigue_1": <int>,
-            "n_fatigue_2": <int>,
-            "n_fatigue_3": <int>,
-            "n_headway__1": <int>,
-            "n_headway_0": <int>,
-            "n_headway_1": <int>,
-            "n_headway_2": <int>,
-            "n_headway_3": <int>,
-            "n_overtaking_0": <int>,
-            "n_overtaking_1": <int>,
-            "n_overtaking_2": <int>,
-            "n_overtaking_3": <int>,
-            "n_speeding_0": <int>,
-            "n_speeding_1": <int>,
-            "n_speeding_2": <int>,
-            "n_speeding_3": <int>
-        }
-    }
-    ```
-
-    **Response**
-    ```python
-    {
-        "uuid": <str>,  # Trip UUID
+**Body**
+```python
+{
+    "driver": <str>,  # Driver UUID
+    "fleet": <str>,  # Fleet UUID
+    "info": {  # Trip info
         "start": <str>,  # Trip start datetime in ISO format
         "end": <str>,  # Trip end datetime in ISO format
         "duration": <float>,  # Trip duration in seconds
         "distance": <float>  # Trip distance in km
-        "profile": <str>  # Trip profile
-        "fleet": <str>  # Fleet UUID
+    },
+    "idreams_uuid": <str>,  # i-DREAMS trip UUID, required if "data" is None
+    "data": {  # Trip data, required if "idreams_uuid" is None
+        "n_ha": <int>,
+        "n_ha_l": <int>,
+        "n_ha_m": <int>,
+        "n_ha_h": <int>,
+        "n_hb": <int>,
+        "n_hb_l": <int>,
+        "n_hb_m": <int>,
+        "n_hb_h": <int>,
+        "n_hc": <int>,
+        "n_hc_l": <int>,
+        "n_hc_m": <int>,
+        "n_hc_h": <int>,
+        "fcw_time": <int>,
+        "hmw_time": <int>,
+        "ldw_time": <int>,
+        "pcw_time": <int>,
+        "n_pedestrian_dz": <int>,
+        "n_tsr_level": <int>,
+        "n_tsr_level_0": <int>,
+        "n_tsr_level_1": <int>,
+        "n_tsr_level_2": <int>,
+        "n_tsr_level_3": <int>,
+        "n_tsr_level_4": <int>,
+        "n_tsr_level_5": <int>,
+        "n_tsr_level_6": <int>,
+        "n_tsr_level_7": <int>,
+        "n_brakes": <int>,
+        "speed": <int>,
+        "n_fcw": <int>,
+        "n_hmw": <int>,
+        "n_ldw": <int>,
+        "n_ldw_left": <int>,
+        "n_ldw_right": <int>,
+        "n_pcw": <int>,
+        "n_fatigue_0": <int>,
+        "n_fatigue_1": <int>,
+        "n_fatigue_2": <int>,
+        "n_fatigue_3": <int>,
+        "n_headway__1": <int>,
+        "n_headway_0": <int>,
+        "n_headway_1": <int>,
+        "n_headway_2": <int>,
+        "n_headway_3": <int>,
+        "n_overtaking_0": <int>,
+        "n_overtaking_1": <int>,
+        "n_overtaking_2": <int>,
+        "n_overtaking_3": <int>,
+        "n_speeding_0": <int>,
+        "n_speeding_1": <int>,
+        "n_speeding_2": <int>,
+        "n_speeding_3": <int>
     }
-    ```
+}
+```
+
+**Response**
+```python
+{
+    "uuid": <str>,  # Trip UUID
+    "start": <str>,  # Trip start datetime in ISO format
+    "end": <str>,  # Trip end datetime in ISO format
+    "duration": <float>,  # Trip duration in seconds
+    "distance": <float>  # Trip distance in km
+    "profile": <str>  # Trip profile
+    "fleet": <str>  # Fleet UUID
+}
+```
+</details>
 
 
-* ### Get clients
+<details>
+<summary><h3>Get clients</h3></summary>
 
-    **Endpoint**\
-    [GET]
-    /clients
+**Endpoint**\
+[GET]
+/clients
 
-    **Response**
-    ```python
-    # List of all clients
-    [
-       {
-        'uuid': <str>,  # Client UUID
-        'name': <str>,  # Client name
-        'drivers': <list>,  # List of client drivers UUID
-        'fleets': <list>  # List of client fleets UUID
-       }
-       ...
-    ]
-    ```
-
-* ### Get drivers
-
-    **Endpoint**\
-    [GET]
-    /drivers
-
-    **Response**
-    ```python
-    # List of all drivers
-    [
-       {
-        'client': <str>,  # Client UUID
-        'name': <str>,  # Driver name
-        'uuid': <str>,  # Driver UUID
-       }
-       ...
-    ]
-    ```
+**Response**
+```python
+# List of all clients
+[
+    {
+    'uuid': <str>,  # Client UUID
+    'name': <str>,  # Client name
+    'drivers': <list>,  # List of client drivers UUID
+    'fleets': <list>  # List of client fleets UUID
+    }
+    ...
+]
+```
+</details>
 
 
-* ### Get driver trips
+<details>
+<summary><h3>Get drivers</h3></summary>
 
-    **Endpoint**\
-    [GET]
-    /drivers/<uuid>/trips
+**Endpoint**\
+[GET]
+/drivers
 
-    **Response**
-    ```python
-    # List of all driver trips
-    [
-       {
-        "uuid": <str>,  # Trip UUID
-        "start": <str>,  # Trip start datetime in ISO format
-        "end": <str>,  # Trip end datetime in ISO format
-        "duration": <float>,  # Trip duration in seconds
-        "distance": <float>  # Trip distance in km
-        "profile": <str>  # Trip profile
-        "fleet": <str>  # Fleet UUID
-        }
-       ...
-    ]
-    ```
+**Response**
+```python
+# List of all drivers
+[
+    {
+    'client': <str>,  # Client UUID
+    'name': <str>,  # Driver name
+    'uuid': <str>,  # Driver UUID
+    }
+    ...
+]
+```
+</details>
 
 
-* ### Get fleet trips
+<details>
+<summary><h3>Get driver trips</h3></summary>
 
-    **Endpoint**\
-    [GET]
-    /clients/<uuid>/fleets/<uuid>/trips
+**Endpoint**\
+[GET]
+/drivers/<uuid>/trips
 
-    **Response**
-    ```python
-    # List of all client fleet trips
-    [
-       {
-        "uuid": <str>,  # Trip UUID
-        "start": <str>,  # Trip start datetime in ISO format
-        "end": <str>,  # Trip end datetime in ISO format
-        "duration": <float>,  # Trip duration in seconds
-        "distance": <float>  # Trip distance in km
-        "profile": <str>  # Trip profile
-        "fleet": <str>  # Fleet UUID
-        }
-       ...
-    ]
-    ```
+**Response**
+```python
+# List of all driver trips
+[
+    {
+    "uuid": <str>,  # Trip UUID
+    "start": <str>,  # Trip start datetime in ISO format
+    "end": <str>,  # Trip end datetime in ISO format
+    "duration": <float>,  # Trip duration in seconds
+    "distance": <float>  # Trip distance in km
+    "profile": <str>  # Trip profile
+    "fleet": <str>  # Fleet UUID
+    }
+    ...
+]
+```
+</details>
+
+
+<details>
+<summary><h3>Get fleet trips</h3></summary>
+
+**Endpoint**\
+[GET]
+/clients/<uuid>/fleets/<uuid>/trips
+
+**Response**
+```python
+# List of all client fleet trips
+[
+    {
+    "uuid": <str>,  # Trip UUID
+    "start": <str>,  # Trip start datetime in ISO format
+    "end": <str>,  # Trip end datetime in ISO format
+    "duration": <float>,  # Trip duration in seconds
+    "distance": <float>  # Trip distance in km
+    "profile": <str>  # Trip profile
+    "fleet": <str>  # Fleet UUID
+    }
+    ...
+]
+```
+</details>
 
