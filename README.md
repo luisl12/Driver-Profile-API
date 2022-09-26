@@ -72,15 +72,6 @@ Endpoints
     Content-Type: application/json
 
     **Body**
-    > **driver**: Client name\
-    > **fleet**: List with fleet names\
-    > **info**:{
-    >> **start**:\
-    >> **start**:\
-    >> **start**:\
-    >> **start**:\
-    }\
-    **data**:\
     ```python
     {
         "driver": "14ec7cb3a5db4f5cbf643824e3ab636c",
