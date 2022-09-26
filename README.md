@@ -30,7 +30,9 @@ Endpoints
 
 **Endpoint**\
 [POST]
+```
 /drivers
+```
 
 **Headers**\
 Content-Type: application/json
@@ -38,7 +40,7 @@ Content-Type: application/json
 **Body**
 ```python
 {
-    "name": <str>,  # Driver name
+    "name": <str>  # Driver name
 }
 ```
 
@@ -46,7 +48,7 @@ Content-Type: application/json
 ```python
 {
     "uuid": <str>,  # Driver UUID
-    "name": <str>,  # Driver name
+    "name": <str>  # Driver name
 }
 ```
 </details>
@@ -57,7 +59,9 @@ Content-Type: application/json
 
 **Endpoint**\
 [POST]
+```
 /clients
+```
 
 **Headers**\
 Content-Type: application/json
@@ -66,7 +70,7 @@ Content-Type: application/json
 ```python
 {
     "client": <str>,  # Client name
-    "fleets": <list>,  # List with fleet names
+    "fleets": <list>  # List with fleet names
 }
 ```
 
@@ -76,7 +80,7 @@ Content-Type: application/json
     "uuid": <str>,  # Driver UUID
     "name": <str>,  # Driver name
     "drivers": <list>,  # List with drivers uuid
-    "fleets": <list>,  # List with fleets uuid
+    "fleets": <list>  # List with fleets uuid
 }
 ```
 </details>
@@ -87,7 +91,9 @@ Content-Type: application/json
 
 **Endpoint**\
 [POST]
+```
 /trips
+```
 
 **Headers**\
 Content-Type: application/json
@@ -167,8 +173,8 @@ Content-Type: application/json
     "start": <str>,  # Trip start datetime in ISO format
     "end": <str>,  # Trip end datetime in ISO format
     "duration": <float>,  # Trip duration in seconds
-    "distance": <float>  # Trip distance in km
-    "profile": <str>  # Trip profile
+    "distance": <float>,  # Trip distance in km
+    "profile": <str>,  # Trip profile
     "fleet": <str>  # Fleet UUID
 }
 ```
@@ -180,7 +186,9 @@ Content-Type: application/json
 
 **Endpoint**\
 [GET]
+```
 /clients
+```
 
 **Response**
 ```python
@@ -203,7 +211,9 @@ Content-Type: application/json
 
 **Endpoint**\
 [GET]
+```
 /drivers
+```
 
 **Response**
 ```python
@@ -212,7 +222,7 @@ Content-Type: application/json
     {
     'client': <str>,  # Client UUID
     'name': <str>,  # Driver name
-    'uuid': <str>,  # Driver UUID
+    'uuid': <str>  # Driver UUID
     }
     ...
 ]
@@ -225,7 +235,9 @@ Content-Type: application/json
 
 **Endpoint**\
 [GET]
+```
 /drivers/<uuid>/trips
+```
 
 **Response**
 ```python
@@ -236,8 +248,8 @@ Content-Type: application/json
     "start": <str>,  # Trip start datetime in ISO format
     "end": <str>,  # Trip end datetime in ISO format
     "duration": <float>,  # Trip duration in seconds
-    "distance": <float>  # Trip distance in km
-    "profile": <str>  # Trip profile
+    "distance": <float>,  # Trip distance in km
+    "profile": <str>,  # Trip profile
     "fleet": <str>  # Fleet UUID
     }
     ...
@@ -251,7 +263,9 @@ Content-Type: application/json
 
 **Endpoint**\
 [GET]
+```
 /clients/<uuid>/fleets/<uuid>/trips
+```
 
 **Response**
 ```python
@@ -262,8 +276,8 @@ Content-Type: application/json
     "start": <str>,  # Trip start datetime in ISO format
     "end": <str>,  # Trip end datetime in ISO format
     "duration": <float>,  # Trip duration in seconds
-    "distance": <float>  # Trip distance in km
-    "profile": <str>  # Trip profile
+    "distance": <float>,  # Trip distance in km
+    "profile": <str>,  # Trip profile
     "fleet": <str>  # Fleet UUID
     }
     ...
@@ -277,7 +291,9 @@ Content-Type: application/json
 
 **Endpoint**\
 [GET]
+```
 /drivers/<uuid>/profile
+```
 
 **Response**
 ```python
@@ -286,7 +302,7 @@ Content-Type: application/json
     "behavior_status": {
         "status": <str>,  # Status message
         "volatility": <float>  # Volatility value
-    }
+    },
     "driver_profile": <str>  # Driver profile
     }
     ...
@@ -311,7 +327,7 @@ Content-Type: application/json
     "behavior_status": {
         "status": <str>,  # Status message
         "volatility": <float>  # Volatility value
-    }
+    },
     "fleet_profile": <str>  # Fleet profile
     }
     ...
