@@ -25,7 +25,7 @@ Running the API
 Endpoints
 -------------------
 
-### Create driver
+* ### Create driver
 
 **Endpoint**\
 [POST]
@@ -36,7 +36,7 @@ Content-Type: application/json
 
 **Body**\
 {\
-    "name": <string> >Driver name\
+> "name": Driver name
 }
 
 
