@@ -177,6 +177,7 @@ Endpoints
 
     **Response**
     ```python
+    # List of all clients
     [
        {
         'uuid': <str>,  # Client UUID
