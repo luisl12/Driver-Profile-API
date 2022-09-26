@@ -208,3 +208,51 @@ Endpoints
     ]
     ```
 
+
+* ### Get driver trips
+
+    **Endpoint**\
+    [GET]
+    /drivers/<uuid>/trips
+
+    **Response**
+    ```python
+    # List of all driver trips
+    [
+       {
+        "uuid": <str>,  # Trip UUID
+        "start": <str>,  # Trip start datetime in ISO format
+        "end": <str>,  # Trip end datetime in ISO format
+        "duration": <float>,  # Trip duration in seconds
+        "distance": <float>  # Trip distance in km
+        "profile": <str>  # Trip profile
+        "fleet": <str>  # Fleet UUID
+        }
+       ...
+    ]
+    ```
+
+
+* ### Get fleet trips
+
+    **Endpoint**\
+    [GET]
+    /clients/<uuid>/fleets/<uuid>/trips
+
+    **Response**
+    ```python
+    # List of all client fleet trips
+    [
+       {
+        "uuid": <str>,  # Trip UUID
+        "start": <str>,  # Trip start datetime in ISO format
+        "end": <str>,  # Trip end datetime in ISO format
+        "duration": <float>,  # Trip duration in seconds
+        "distance": <float>  # Trip distance in km
+        "profile": <str>  # Trip profile
+        "fleet": <str>  # Fleet UUID
+        }
+       ...
+    ]
+    ```
+
