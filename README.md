@@ -42,8 +42,12 @@ Endpoints
     ```
 
     **Response**
-    > **uuid**: Driver UUID\
-    > **name**: Driver name
+    ```python
+    {
+        "uuid": <str>,  # Driver UUID
+        "name": <str>,  # Driver name
+    }
+    ```
 
 
 * ### Create client
@@ -64,10 +68,14 @@ Endpoints
     ```
 
     **Response**
-    > **uuid**: Driver UUID\
-    > **name**: Driver name\
-    > **drivers**: List with drivers uuid\
-    > **fleets**: List with fleets uuid
+    ```python
+    {
+        "uuid": <str>,  # Driver UUID
+        "name": <str>,  # Driver name
+        "drivers": <list>,  # List with drivers uuid
+        "fleets": <list>,  # List with fleets uuid
+    }
+    ```
 
 
 * ### Create trip
@@ -82,16 +90,16 @@ Endpoints
     **Body**
     ```python
     {
-        "driver": <str>,
-        "fleet": <str>,
-        "info": {
-            "start": <str>,
-            "end": <str>,
-            "duration": <float>,
-            "distance": <float>
+        "driver": <str>,  # Driver UUID
+        "fleet": <str>,  # Fleet UUID
+        "info": {  # Trip info
+            "start": <str>,  # Trip start datetime in ISO format
+            "end": <str>,  # Trip end datetime in ISO format
+            "duration": <float>,  # Trip duration in seconds
+            "distance": <float>  # Trip distance in km
         },
-        "idreams_uuid": <str, optional>,
-        "data": {
+        "idreams_uuid": <str>,  # i-DREAMS trip UUID, required if "data" is None
+        "data": {  # Trip data, required if "idreams_uuid" is None
             "n_ha": <int>,
             "n_ha_l": <int>,
             "n_ha_m": <int>,
@@ -148,10 +156,17 @@ Endpoints
     ```
 
     **Response**
-    > **uuid**: Driver UUID\
-    > **name**: Driver name\
-    > **drivers**: List with drivers uuid\
-    > **fleets**: List with fleets uuid
+    ```python
+    {
+        "uuid": <str>,  # Trip UUID
+        "start": <str>,  # Trip start datetime in ISO format
+        "end": <str>,  # Trip end datetime in ISO format
+        "duration": <float>,  # Trip duration in seconds
+        "distance": <float>  # Trip distance in km
+        "profile": <str>  # Trip profile
+        "fleet": <str>  # Fleet UUID
+    }
+    ```
 
 
 
