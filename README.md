@@ -169,5 +169,21 @@ Endpoints
     ```
 
 
+* ### Get clients
 
+    **Endpoint**\
+    [GET]
+    /clients
+
+    **Response**
+    ```python
+    [
+       {
+        'uuid': <str>,  # Client UUID
+        'name': <str>,  # Client name
+        'drivers': <list>,  # List of client drivers UUID
+        'fleets': <list>  # List of client fleets UUID
+       }...
+    ]
+    ```
 
