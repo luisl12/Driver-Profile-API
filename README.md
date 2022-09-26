@@ -75,10 +75,10 @@ Endpoints
     > **driver**: Client name\
     > **fleet**: List with fleet names\
     > **info**: {\
-        > **start**:\
-        > **start**:\
-        > **start**:\
-        > **start**:\
+    >> **start**:\
+    **start**:\
+    **start**:\
+    **start**:\
     }\
     > **data**:
 
